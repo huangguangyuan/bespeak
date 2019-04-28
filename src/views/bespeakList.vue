@@ -3,7 +3,6 @@
         <van-nav-bar
             title="快速预约"
             fixed
-            @click-left="onClickLeft"
         />
         <van-cell-group>
             <van-cell title="快速报装" is-link size='large' to='/bespeakFrom' />
@@ -27,8 +26,6 @@ export default {
 <style scoped lang="scss">
 .bespeakList{
     position: absolute;width: 100%;height: 100%;top:0;left: 0;box-sizing: border-box;background-color: #ededed;padding-top:46px;
-    
-    
 }
 
 </style>

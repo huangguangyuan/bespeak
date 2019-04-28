@@ -44,6 +44,7 @@
   </div>
 </template>
 <script>
+import { setTimeout } from 'timers';
 export default {
   data() {
     return {
@@ -63,6 +64,7 @@ export default {
       _this.$http
         .post(reqUrl, data)
         .then(res => {
+          console.log(res);
           if (res.data.code == 200) {
             _this.dataList = res.data.data;
             _this.dataList.checked = false;
@@ -99,8 +101,12 @@ export default {
         });
         return false;
       }
-
+      _this.$store.commit({
+        type:'getOrdersId',
+        installOrdersId:idList,
+      })
       _this.$router.push({path:'/bespeakFrom'});
+      
     },
     // 返回按钮
     onClickLeft() {
