@@ -32,7 +32,7 @@ export default new Router({
     {
       path:'/bespeakFrom2',
       name:'bespeakFrom2',
-      meta:{index:1},
+      meta:{index:2},
       component: () => import('./views/bespeakFrom2.vue')
     },
     // 商品详情

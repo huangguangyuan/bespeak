@@ -64,7 +64,6 @@ export default {
       _this.$http
         .post(reqUrl, data)
         .then(res => {
-          console.log(res);
           if (res.data.code == 200) {
             _this.dataList = res.data.data;
             _this.dataList.checked = false;

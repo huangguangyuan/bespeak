@@ -5,7 +5,7 @@
             fixed
         />
         <van-cell-group>
-            <van-cell title="快速报装" is-link size='large' to='/bespeakFrom' />
+            <van-cell title="快速报装" is-link size='large' to='/bespeakFrom2' />
             <van-cell title="预约维修" is-link size='large' />
             <van-cell title="预约详情" is-link size='large' to='/bespeakDetails' />
         </van-cell-group>
