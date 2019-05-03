@@ -58,8 +58,8 @@ export default {
     saveFun(){
         var _this = this;
         _this.$store.commit({
-            type:'saveParkingInfo',
-            parkingInfo:_this.infoData
+            type:'saveInstallInfo',
+            installInfo:_this.infoData
         });
         _this.$router.push({path:'/bespeakFrom2'});
     }

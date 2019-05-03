@@ -11,7 +11,7 @@
         <input type="text" placeholder="请输入短信验证码" v-model="SMS">
         <p @click="getCode" class="seedCode">发送验证码</p>
       </div>
-      <van-button type="default" size="large" class="btn-custom" @click='bingFn'>绑 定</van-button>
+      <van-button type="default" size="large" class="btn-custom" @click="bingFn">绑 定</van-button>
     </div>
     <div class="tips">
       <p>*预约安装和查询进度前，请首先绑定手机号。</p>
@@ -31,9 +31,15 @@ export default {
       SMS: ""
     };
   },
-  mounted() {
+  created() {
     var _this = this;
-    console.log(sessionStorage.getItem('isType'));
+    if (sessionStorage.getItem("isType") == "isband") {
+      _this.$router.push({ path: "/bespeakFrom" });
+    } else if (sessionStorage.getItem("isType") == "noband") {
+      _this.$router.push({ path: "/bespeakFrom2" });
+    } else {
+      return false;
+    }
   },
   methods: {
     // 返回按钮
@@ -65,27 +71,37 @@ export default {
         });
     },
     // 绑定
-    bingFn(){
+    bingFn() {
       var _this = this;
-      var reqUrl = '/index/applogin/login';
+      var reqUrl = "/index/applogin/login";
       var data = {
-        phone:_this.phone,
-        code:_this.SMS
-      }
-      _this.$http.post(reqUrl,data).then(res => {
-        if(res.data.code == 200){
-          sessionStorage.setItem('isType', res.data.data.user_type);
-          _this.$dialog.alert({
-            title: "提 示",
-            message: "绑定成功！"
-          }).then(res => {
-            _this.$router.push({path:'/commodityDetails'});
-          });
-        }
-
-      }).catch(err => {
-        console.log(err);
-      });
+        phone: _this.phone,
+        code: _this.SMS
+      };
+      _this.$http
+        .post(reqUrl, data)
+        .then(res => {
+          console.log(res);
+          sessionStorage.setItem("isType", res.data.data.user_type);
+          if (res.data.code == 200) {
+            sessionStorage.setItem("isType", res.data.data.user_type);
+            _this.$dialog
+              .alert({
+                title: "提 示",
+                message: "绑定成功！"
+              })
+              .then(res => {
+                if (res.data.data.user_type == "isband") {
+                  _this.$router.push({ path: "/bespeakFrom" });
+                } else if (res.data.data.user_type == "noband") {
+                  _this.$router.push({ path: "/bespeakFrom2" });
+                }
+              });
+          }
+        })
+        .catch(err => {
+          console.log(err);
+        });
     }
   }
 };

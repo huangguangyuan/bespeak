@@ -80,7 +80,7 @@ module.exports = {
       proxy: {
             "/index": {
               target: "http://lenovo.starrydigital.cn/index/",//目标主机 
-              ws: true,//代理的WebSockets  
+              ws: false,//代理的WebSockets  
               changeOrigin: true,//需要虚拟主机站点 
               pathRewrite: {
                   '^/index': '/' 

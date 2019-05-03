@@ -1,5 +1,5 @@
 <template>
-  <div class="bespeakFrom">
+  <div class="repairFrom">
     <van-nav-bar title="快速报装" left-arrow fixed @click-left="onClickLeft"/>
     <van-cell-group>
       <van-field label="报装人" placeholder="请填写报装人" v-model="info.username"/>
@@ -84,6 +84,7 @@
 import qs from "qs";
 import areaList from "@/lib/ares.js";
 export default {
+  name:'repairFrom',
   data() {
     return {
       isShowArea: false,
@@ -243,7 +244,7 @@ export default {
 };
 </script>
 <style scoped lang="scss">
-.bespeakFrom {
+.repairFrom {
   position: absolute;
   width: 100%;
   height: 100%;

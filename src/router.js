@@ -7,19 +7,19 @@ export default new Router({
   mode: 'hash',
   base: process.env.BASE_URL,
   routes: [
-    // 绑定账号
-    {
-      path:'/binding',
-      name:'binding',
-      meta:{index:1},
-      component: () => import('./views/Binding.vue')
-    },
     // 快速预约
     {
       path:'/',
       name:'bespeakList',
       meta:{index:1},
       component: () => import('./views/bespeakList.vue')
+    },
+    // 绑定账号
+    {
+      path:'/binding',
+      name:'binding',
+      meta:{index:2},
+      component: () => import('./views/Binding.vue')
     },
     // 快速预约/报装（表单）
     {
@@ -34,6 +34,13 @@ export default new Router({
       name:'bespeakFrom2',
       meta:{index:2},
       component: () => import('./views/bespeakFrom2.vue')
+    },
+    // 维修预约表单
+    {
+      path:'/repairFrom',
+      name:'repairFrom',
+      meta:{index:2},
+      component: () => import('./views/repairFrom.vue')
     },
     // 商品详情
     {
@@ -53,8 +60,15 @@ export default new Router({
     {
       path:'/uploader',
       name:'uploader',
-      meta:{index:1},
+      meta:{index:3},
       component: () => import('./views/uploader.vue')
+    },
+    // 图片上传
+    {
+      path:'/uploader2',
+      name:'uploader2',
+      meta:{index:3},
+      component: () => import('./views/uploader2.vue')
     },
   ]
 })

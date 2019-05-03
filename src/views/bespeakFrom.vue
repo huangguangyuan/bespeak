@@ -104,12 +104,12 @@ export default {
             },
             isShowSuccess:false,//是否显示成功
             info:{
-                username:'小明',
-                phone:'13268005133',
+                username:'',
+                phone:'',
                 area:'',
                 areaValue:'',
-                address:'哈哈哈街',
-                install_address:'哈哈哈街',
+                address:'',
+                install_address:'',
                 install_orders_id:[],
                 appoint_time:''
             }//表单信息
@@ -125,7 +125,7 @@ export default {
     methods:{
         // 顶部返回按钮
         onClickLeft(){
-            this.$router.go(-1);
+            this.$router.push({path:'/'});
         },
         // 选择省市区
         selectArea(){
