@@ -1,6 +1,6 @@
 <template>
   <div class="uploader">
-    <van-nav-bar title="快速报装" left-arrow fixed @click-left="onClickLeft"/>
+    <van-nav-bar title="故障描述" left-arrow fixed @click-left="onClickLeft"/>
     <ul class="picture-list">
         <li v-for='(item, index) in pictureSrc' :key='index'>
             <van-uploader :name='item.num' :after-read="onRead">
@@ -12,11 +12,6 @@
     </ul>
     <!-- 备注 -->
     <div class="remarks">
-        <div class="size">
-            <span>导向片尺寸</span>
-            长 <input type="text" v-model='infoData.long'> cm
-            宽 <input type="text" v-model="infoData.wide"> cm
-        </div>
         <van-field
             label="备注："
             type="textarea"
@@ -43,9 +38,7 @@ export default {
         infoData:{
             type:'packing',
             picData:['','','',''],
-            remark:'',
-            long:'',
-            wide:''
+            remark:''
         }
     };
   },
@@ -65,10 +58,10 @@ export default {
     saveFun(){
         var _this = this;
         _this.$store.commit({
-            type:'saveInstallInfo',
-            installInfo:_this.infoData
+            type:'saveFaultInfo',
+            faultInfo:_this.infoData
         });
-        _this.$router.push({path:'/bespeakFrom2'});
+        _this.$router.push({path:'/repairFrom'});
     }
 
   }
@@ -88,8 +81,6 @@ export default {
     }
     .remarks{
         padding:0 13px;border-top:1px #e0e0e0 solid;border-bottom:1px #e0e0e0 solid;background-color: #ffffff;margin-top: 20px;
-        .size{font-size: 14px;padding:15px 0;text-align: center;border-bottom:1px #e0e0e0 solid;}
-        input{width: 80px;border:0;text-align: center;border-bottom: 1px #000 solid;}
     }
     .btn-ground{
         width: 350px;margin: 40px auto 0;

@@ -170,7 +170,9 @@ export default {
         huanjing_img3:this.info.InstallPic[2],
         huanjing_img4:this.info.InstallPic[3],
         baozhuang_beizhu:this.packingInfo.remark,
-        huanjing_beizhu:this.installInfo.remark
+        huanjing_beizhu:this.installInfo.remark,
+        width:this.installInfo.wide+'cm',
+        height:this.installInfo.long+'cm',
       };
       console.log(data);
       _this.$http.post(reqUrl, qs.stringify(data)).then(res => {

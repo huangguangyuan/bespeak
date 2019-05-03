@@ -70,5 +70,12 @@ export default new Router({
       meta:{index:3},
       component: () => import('./views/uploader2.vue')
     },
+    // 图片上传
+    {
+      path:'/uploader3',
+      name:'uploader3',
+      meta:{index:3},
+      component: () => import('./views/uploader3.vue')
+    },
   ]
 })

@@ -104,7 +104,7 @@ export default {
         type:'getOrdersId',
         installOrdersId:idList,
       })
-      _this.$router.push({path:'/bespeakFrom'});
+      _this.$router.go(-1);
       
     },
     // 返回按钮

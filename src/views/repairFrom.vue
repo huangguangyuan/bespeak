@@ -1,6 +1,6 @@
 <template>
   <div class="repairFrom">
-    <van-nav-bar title="快速报装" left-arrow fixed @click-left="onClickLeft"/>
+    <van-nav-bar title="快速维修" left-arrow fixed @click-left="onClickLeft"/>
     <van-cell-group>
       <van-field label="报装人" placeholder="请填写报装人" v-model="info.username"/>
       <van-field label="手机号" placeholder="请填写手机号" v-model="info.phone"/>
@@ -14,14 +14,13 @@
         <van-icon slot="icon" name="arrow"/>
       </van-field>
       <van-field
-        label="销售商"
-        placeholder="请选择销售商"
-        v-model="info.agentValue"
-        readonly
-        @click="changeAgent"
-      >
-        <van-icon slot="icon" name="arrow"/>
-      </van-field>
+        label="详细地址"
+        type="textarea"
+        rows="1"
+        autosize
+        placeholder="请填写详细地址"
+        v-model="info.address"
+      />
       <van-field
         label="安装地址"
         type="textarea"
@@ -30,8 +29,13 @@
         placeholder="请填写安装地址"
         v-model="info.install_address"
       />
-      <van-cell title="包装图片" is-link to="/uploader" @click='saveInfo' :value="packingInfo.remark"></van-cell>
-      <van-cell title="安装环境图片" is-link to="/uploader2" @click='saveInfo' :value="installInfo.remark"></van-cell>
+      <van-cell title="商品订单号" is-link to="/commodityDetails" @click="saveInfo">
+        <template slot="title">
+          <span style="width:90px;display: inline-block;">商品订单号</span>
+          <span style="padding:0 3px" v-for="item in info.install_orders_id">{{item}}</span>
+        </template>
+      </van-cell>
+      <van-cell title="故障描述" is-link to="/uploader3" @click="saveInfo" :value="faultInfo.remark"></van-cell>
       <van-field
         label="预约时间"
         readonly
@@ -70,7 +74,13 @@
     </van-popup>
     <!-- 选择经销商 -->
     <van-popup v-model="isShowAgent" position="bottom">
-      <van-picker show-toolbar :columns="agentList" @change="changeAgent" @cancel="onCancelAgent" @confirm="onConfirm"/>
+      <van-picker
+        show-toolbar
+        :columns="agentList"
+        @change="changeAgent"
+        @cancel="onCancelAgent"
+        @confirm="onConfirm"
+      />
     </van-popup>
     <!-- 预约成功 -->
     <van-popup v-model="isShowSuccess" class="success-mask">
@@ -84,7 +94,7 @@
 import qs from "qs";
 import areaList from "@/lib/ares.js";
 export default {
-  name:'repairFrom',
+  name: "repairFrom",
   data() {
     return {
       isShowArea: false,
@@ -103,14 +113,14 @@ export default {
         username: "",
         phone: "",
         area: "",
-        agentValue: "广东省深圳市福田区赛格广场店",
+        address: "",
         areaValue: "",
         install_address: "",
+        install_orders_id:[],
         packingPic: ["", "", "", ""],
-        InstallPic: ["", "", "", ""],
         appoint_time: ""
       }, //表单信息
-      agentList: [],
+      agentList: []
     };
   },
   mounted() {
@@ -118,15 +128,13 @@ export default {
     if (JSON.stringify(_this.formInfo) != "{}") {
       _this.info = _this.formInfo;
     }
-    _this.info.packingPic = _this.packingInfo.picData;
-    _this.info.InstallPic = _this.installInfo.picData;
-    // 获取经销商列表
-    _this.getAgentFun();
+    _this.info.packingPic = _this.faultInfo.picData;
+    _this.info.install_orders_id = _this.ordersId;
   },
   methods: {
     // 顶部返回按钮
     onClickLeft() {
-      this.$router.push({path:'/'});
+      this.$router.push({ path: "/" });
     },
     // 选择省市区
     selectArea() {
@@ -153,25 +161,22 @@ export default {
     // 提交表单
     submitFn() {
       var _this = this;
-      var reqUrl = "/index/appointment/noband_install";
+      var reqUrl = "/index/appointment/repare";
       var data = {
         username: this.info.username,
         phone: this.info.phone,
         area: this.info.area,
-        buy_agent:'广东省深圳市福田区赛格广场店',
-        buy_agent_id:1,
+        buy_agent: "广东省深圳市福田区赛格广场店",
+        buy_agent_id: 1,
         install_address: this.info.install_address,
         appoint_time: this.info.appoint_time,
-        baozhuang_img1:this.info.packingPic[0],
-        baozhuang_img2:this.info.packingPic[1],
-        baozhuang_img3:this.info.packingPic[2],
-        baozhuang_img4:this.info.packingPic[3],
-        huanjing_img1:this.info.InstallPic[0],
-        huanjing_img2:this.info.InstallPic[1],
-        huanjing_img3:this.info.InstallPic[2],
-        huanjing_img4:this.info.InstallPic[3],
-        baozhuang_beizhu:this.packingInfo.remark,
-        huanjing_beizhu:this.installInfo.remark
+        baozhuang_img1: this.info.packingPic[0],
+        baozhuang_img2: this.info.packingPic[1],
+        baozhuang_img3: this.info.packingPic[2],
+        baozhuang_img4: this.info.packingPic[3],
+        description: this.faultInfo.remark,
+        address:this.info.address,
+        install_orders_id:this.info.install_orders_id
       };
       console.log(data);
       _this.$http.post(reqUrl, qs.stringify(data)).then(res => {
@@ -183,40 +188,18 @@ export default {
         }
       });
     },
-    // 获取代理商列表
-    getAgentFun() {
-      var _this = this;
-      var reqUrl = "/index/appointment/agent_info";
-      var data = {};
-      _this.$http.post(reqUrl, data).then(res => {
-        if (res.data.code == 200) {
-          _this.agentList = res.data.data.map(item => {
-            return item.store;
-          });
-        } else {
-          _this.$dialog
-            .alert({
-              title: "提 示",
-              message: "您还没绑定手机号，现在去绑定"
-            })
-            .then(() => {
-              _this.$router.push({ path: "/binding" });
-            });
-        }
-      });
-    },
     // 选择经销商
     changeAgent() {
       var _this = this;
       _this.isShowAgent = true;
     },
     // 选择经销商
-    onCancelAgent(){
-        this.isShowAgent = false;
+    onCancelAgent() {
+      this.isShowAgent = false;
     },
     // 取消
-    onConfirm(){
-        this.isShowAgent = false;
+    onConfirm() {
+      this.isShowAgent = false;
     },
     // 监听子数据返回数据
     listData(res) {
@@ -234,12 +217,12 @@ export default {
     formInfo() {
       return this.$store.state.installMode.fromData;
     },
-    packingInfo(){
-      return this.$store.state.installMode.parkingInfo;
+    faultInfo() {
+      return this.$store.state.installMode.faultInfo;
     },
-    installInfo(){
-      return this.$store.state.installMode.installInfo;
-    }
+    ordersId(){
+        return this.$store.state.installMode.installOrdersId;
+    },
   }
 };
 </script>

@@ -15,8 +15,15 @@ let installMode = {
     installInfo: {
       type: 'packing',
       picData: ['', '', '', ''],
-      remark: ''
+      remark: '',
+      long:'',
+      wide:''
     },//安装环境图片信息
+    faultInfo: {
+      type: 'packing',
+      picData: ['', '', '', ''],
+      remark: ''
+    },//故障图片信息
   },
   mutations: {
     getOrdersId(state, payload) {
@@ -32,7 +39,11 @@ let installMode = {
     // 保存上传安装的图片
     saveInstallInfo(state, payload) {
       state.installInfo = payload.installInfo
-    }
+    },
+    // 保存上传故障的图片
+    saveFaultInfo(state, payload) {
+      state.faultInfo = payload.faultInfo
+    },
   }
 }
 
