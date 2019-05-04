@@ -77,5 +77,12 @@ export default new Router({
       meta:{index:3},
       component: () => import('./views/uploader3.vue')
     },
+    // 图片上传
+    {
+      path:'/evaluateFrom',
+      name:'evaluateFrom',
+      meta:{index:4},
+      component: () => import('./views/evaluateFrom.vue')
+    },
   ]
 })

@@ -24,6 +24,7 @@ let installMode = {
       picData: ['', '', '', ''],
       remark: ''
     },//故障图片信息
+    evaluateInfo:{}//评价信息
   },
   mutations: {
     getOrdersId(state, payload) {
@@ -44,6 +45,9 @@ let installMode = {
     saveFaultInfo(state, payload) {
       state.faultInfo = payload.faultInfo
     },
+    saveEvaluateInfo(state, payload){
+      state.evaluateInfo = payload.evaluateInfo
+    }
   }
 }
 
