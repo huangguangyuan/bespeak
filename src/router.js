@@ -53,7 +53,7 @@ export default new Router({
     {
       path:'/bespeakDetails',
       name:'bespeakDetails',
-      meta:{index:1},
+      meta:{index:2},
       component: () => import('./views/bespeakDetails.vue')
     },
     // 图片上传

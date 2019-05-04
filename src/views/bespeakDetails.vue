@@ -31,15 +31,29 @@
     </div>
 </template>
 <script>
+import qs from 'qs';
 export default {
     name:'bespeakDetails',
     data(){
         return{
-            onClickLeft(){}
+            
         }
     },
+    mounted(){
+        this.getDetailsFun();
+    },
     methods:{
-
+        onClickLeft(){
+            this.$router.push({path:'/'});
+        },
+        getDetailsFun(){
+            var _this = this;
+            var reqUrl = '/index/appointment/myOrderList';
+            var data = {};
+            _this.$http.get(reqUrl,qs.stringify(data)).then(res => {
+                console.log(res.data);
+            })
+        }
     }
 }
 </script>
