@@ -29,7 +29,7 @@
         placeholder="请填写安装地址"
         v-model="info.install_address"
       />
-      <van-cell title="商品订单号" is-link to="/commodityDetails" @click="saveInfo">
+      <van-cell title="商品订单号" v-if='isShowOrderId' is-link to="/commodityDetails" @click="saveInfo">
         <template slot="title">
           <span style="width:90px;display: inline-block;">商品订单号</span>
           <span style="padding:0 3px" v-for="item in info.install_orders_id">{{item}}</span>
@@ -99,6 +99,7 @@ export default {
     return {
       isShowArea: false,
       areaList: areaList,
+      isShowOrderId:true,
       timeParameter: {
         isShowTime: false,
         minHour: 10,
@@ -127,6 +128,9 @@ export default {
   },
   mounted() {
     var _this = this;
+    if(sessionStorage.getItem("isType") == 'noband'){
+      _this.isShowOrderId = false;
+    }
     if (JSON.stringify(_this.formInfo) != "{}") {
       _this.info = _this.formInfo;
     }
@@ -136,7 +140,7 @@ export default {
   methods: {
     // 顶部返回按钮
     onClickLeft() {
-      this.$router.push({ path: "/" });
+      this.$router.go(-1);
     },
     // 选择省市区
     selectArea() {

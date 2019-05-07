@@ -31,16 +31,6 @@ export default {
       SMS: ""
     };
   },
-  created() {
-    var _this = this;
-    // if (sessionStorage.getItem("isType") == "isband") {
-    //   _this.$router.push({ path: "/bespeakFrom" });
-    // } else if (sessionStorage.getItem("isType") == "noband") {
-    //   _this.$router.push({ path: "/bespeakFrom2" });
-    // } else {
-    //   return false;
-    // }
-  },
   methods: {
     // 返回按钮
     onClickLeft() {
@@ -81,8 +71,7 @@ export default {
       _this.$http
         .post(reqUrl, data)
         .then(res => {
-          var user_type = res.data.data.user_type;
-          sessionStorage.setItem("isType", res.data.data.user_type);
+          console.log(res);
           if (res.data.code == 200) {
             sessionStorage.setItem("isType", res.data.data.user_type);
             _this.$dialog
@@ -91,11 +80,7 @@ export default {
                 message: "绑定成功！"
               })
               .then(res => {
-                if (user_type == "isband") {
-                  _this.$router.push({ path: "/bespeakFrom" });
-                } else if (user_type == "noband") {
-                  _this.$router.push({ path: "/bespeakFrom2" });
-                }
+                _this.$router.push({path:'/bespeakList'});
               });
           }
         })

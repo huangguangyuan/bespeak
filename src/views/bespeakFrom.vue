@@ -127,7 +127,7 @@ export default {
     methods:{
         // 顶部返回按钮
         onClickLeft(){
-            this.$router.push({path:'/'});
+            this.$router.go(-1);
         },
         // 选择省市区
         selectArea(){

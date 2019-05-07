@@ -104,12 +104,12 @@ export default {
         province:'',
         city:'',
         area: "",
-        agentValue: "广东省深圳市福田区赛格广场店",
+        agentValue: "",
         areaValue: "",
         install_address: "",
         packingPic: ["", "", "", ""],
         InstallPic: ["", "", "", ""],
-        appoint_time: ""
+        appoint_time: "",
       }, //表单信息
       agentList: [],
     };
@@ -127,7 +127,7 @@ export default {
   methods: {
     // 顶部返回按钮
     onClickLeft() {
-      this.$router.push({path:'/'});
+      this.$router.go(-1);
     },
     // 选择省市区
     selectArea() {
@@ -163,7 +163,7 @@ export default {
         province:this.info.province,
         city:this.info.city,
         area: this.info.area,
-        buy_agent:'广东省深圳市福田区赛格广场店',
+        buy_agent:_this.info.agentValue,
         buy_agent_id:1,
         install_address: this.info.install_address,
         appoint_time: this.info.appoint_time,
@@ -180,9 +180,7 @@ export default {
         width:this.installInfo.wide+'cm',
         height:this.installInfo.long+'cm',
       };
-      console.log(data);
       _this.$http.post(reqUrl, qs.stringify(data)).then(res => {
-        console.log(res);
         if (res.data.code == 200) {
           _this.isShowSuccess = true;
         } else {
@@ -200,15 +198,6 @@ export default {
           _this.agentList = res.data.data.map(item => {
             return item.store;
           });
-        } else {
-          _this.$dialog
-            .alert({
-              title: "提 示",
-              message: "您还没绑定手机号，现在去绑定"
-            })
-            .then(() => {
-              _this.$router.push({ path: "/binding" });
-            });
         }
       });
     },
@@ -222,8 +211,9 @@ export default {
         this.isShowAgent = false;
     },
     // 取消
-    onConfirm(){
+    onConfirm(val){
         this.isShowAgent = false;
+        this.info.agentValue = val
     },
     // 监听子数据返回数据
     listData(res) {

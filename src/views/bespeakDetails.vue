@@ -31,7 +31,7 @@ export default {
   },
   methods: {
     onClickLeft() {
-      this.$router.push({ path: "/" });
+      this.$router.go(-1);
     },
     getDetailsFun() {
       var _this = this;
