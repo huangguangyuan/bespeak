@@ -107,6 +107,8 @@ export default {
                 username:'',
                 phone:'',
                 area:'',
+                province:'',
+                city:'',
                 areaValue:'',
                 address:'',
                 install_address:'',
@@ -136,7 +138,9 @@ export default {
         getArea(res){
             var _this = this;
             _this.isShowArea = false;
-            
+            _this.info.area = '';
+            _this.info.province = res[0].name;
+            _this.info.city = res[1].name;
             for(var i = 0;i<res.length;i++){
                 _this.info.area+= res[i].name;
                 _this.info.area += " ";
@@ -156,6 +160,8 @@ export default {
             var data = {
                 phone:this.info.phone,
                 username:this.info.username,
+                province:this.info.province,
+                city:this.info.city,
                 area:this.info.area,
                 address:this.info.install_address,
                 install_address:this.info.install_address,

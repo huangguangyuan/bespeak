@@ -101,6 +101,8 @@ export default {
       info: {
         username: "",
         phone: "",
+        province:'',
+        city:'',
         area: "",
         agentValue: "广东省深圳市福田区赛格广场店",
         areaValue: "",
@@ -136,7 +138,9 @@ export default {
     getArea(res) {
       var _this = this;
       _this.isShowArea = false;
-
+      _this.info.area = '';
+      _this.info.province = res[0].name;
+      _this.info.city = res[1].name;
       for (var i = 0; i < res.length; i++) {
         _this.info.area += res[i].name;
         _this.info.area += " ";
@@ -156,6 +160,8 @@ export default {
       var data = {
         username: this.info.username,
         phone: this.info.phone,
+        province:this.info.province,
+        city:this.info.city,
         area: this.info.area,
         buy_agent:'广东省深圳市福田区赛格广场店',
         buy_agent_id:1,
