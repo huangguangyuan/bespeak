@@ -28,6 +28,7 @@
   </div>
 </template>
 <script>
+import lrz from 'lrz';
 export default {
   name: "uploader",
   data() {
@@ -50,9 +51,18 @@ export default {
     // 读取图片
     onRead(file, detail) {
       var _this = this;
-      _this.pictureSrc[parseInt(detail.name)].src = file.content;
-      _this.pictureSrc[parseInt(detail.name)].isShow = true;
-      _this.infoData.picData[parseInt(detail.name)] = file.content;
+      _this.runAsync(file.content).then(res => {
+        _this.pictureSrc[parseInt(detail.name)].src = res.base64;
+        _this.pictureSrc[parseInt(detail.name)].isShow = true;
+        _this.infoData.picData[parseInt(detail.name)] = res.base64;
+      })
+    },
+    // 异步获取返回压缩后的图片
+    runAsync(fileData){
+        var p = new Promise((resolve,reject)=>{
+            resolve(lrz(fileData,{width:340,quality:0.6}));
+        })
+        return p;
     },
     // 保存图片
     saveFun(){
