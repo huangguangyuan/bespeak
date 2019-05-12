@@ -2,14 +2,31 @@
   <div class="bespeakFrom">
     <van-nav-bar title="快速报装" left-arrow fixed @click-left="onClickLeft"/>
     <van-cell-group>
-      <van-field label="报装人" placeholder="请填写报装人" v-model="info.username"/>
-      <van-field label="手机号" placeholder="请填写手机号" v-model="info.phone"/>
+      <van-field
+        label="报装人"
+        placeholder="请填写报装人"
+        v-model="info.username"
+        v-validate="'required'"
+        name="username"
+        :error-message="errors.first('username')"
+      />
+      <van-field
+        label="手机号"
+        placeholder="请填写手机号"
+        v-model="info.phone"
+        v-validate="'required|mobile'"
+        name="contactPhone"
+        :error-message="errors.first('contactPhone')"
+      />
       <van-field
         label="区域选择"
         placeholder="请选择省、市、区县"
         readonly
         @click="selectArea"
         v-model="info.area"
+        v-validate="'required'"
+        name="area"
+        :error-message="errors.first('area')"
       >
         <van-icon slot="icon" name="arrow"/>
       </van-field>
@@ -19,6 +36,9 @@
         v-model="info.agentValue"
         readonly
         @click="changeAgent"
+        v-validate="'required'"
+        name="changeAgent"
+        :error-message="errors.first('changeAgent')"
       >
         <van-icon slot="icon" name="arrow"/>
       </van-field>
@@ -29,15 +49,43 @@
         autosize
         placeholder="请填写安装地址"
         v-model="info.install_address"
+        v-validate="'required'"
+        name="install_address"
+        :error-message="errors.first('install_address')"
       />
-      <van-cell title="包装图片" is-link to="/uploader" @click='saveInfo' :value="packingInfo.remark"></van-cell>
-      <van-cell title="安装环境图片" is-link to="/uploader2" @click='saveInfo' :value="installInfo.remark"></van-cell>
+      <van-field
+        label="包装图片"
+        placeholder="请选择包装图片"
+        readonly
+        @click="saveInfo();$router.push({path:'/uploader'})"
+        v-model="packingInfo.remark"
+        v-validate="'required'"
+        name="remark"
+        :error-message="errors.first('remark')"
+      >
+        <van-icon slot="icon" name="arrow"/>
+      </van-field>
+      <van-field
+        label="安装环境图片"
+        placeholder="请上传安装环境图片"
+        readonly
+        @click="saveInfo();$router.push({path:'/uploader2'})"
+        v-model="installInfo.remark"
+        v-validate="'required'"
+        name="remark2"
+        :error-message="errors.first('remark2')"
+      >
+        <van-icon slot="icon" name="arrow"/>
+      </van-field>
       <van-field
         label="预约时间"
         readonly
         placeholder="请选择预约时间"
         @click="timeParameter.isShowTime = true"
         v-model="info.appoint_time"
+        v-validate="'required'"
+        name="install_address"
+        :error-message="errors.first('install_address')"
       >
         <van-icon slot="icon" name="arrow"/>
       </van-field>
@@ -70,7 +118,13 @@
     </van-popup>
     <!-- 选择经销商 -->
     <van-popup v-model="isShowAgent" position="bottom">
-      <van-picker show-toolbar :columns="agentList" @change="changeAgent" @cancel="onCancelAgent" @confirm="onConfirm"/>
+      <van-picker
+        show-toolbar
+        :columns="agentList"
+        @change="changeAgent"
+        @cancel="onCancelAgent"
+        @confirm="onConfirm"
+      />
     </van-popup>
     <!-- 预约成功 -->
     <van-popup v-model="isShowSuccess" class="success-mask">
@@ -101,17 +155,17 @@ export default {
       info: {
         username: "",
         phone: "",
-        province:'',
-        city:'',
+        province: "",
+        city: "",
         area: "",
         agentValue: "",
         areaValue: "",
         install_address: "",
         packingPic: ["", "", "", ""],
         InstallPic: ["", "", "", ""],
-        appoint_time: "",
+        appoint_time: ""
       }, //表单信息
-      agentList: [],
+      agentList: []
     };
   },
   mounted() {
@@ -121,6 +175,7 @@ export default {
     }
     _this.info.packingPic = _this.packingInfo.picData;
     _this.info.InstallPic = _this.installInfo.picData;
+    console.log(_this.packingInfo);
     // 获取经销商列表
     _this.getAgentFun();
   },
@@ -138,7 +193,7 @@ export default {
     getArea(res) {
       var _this = this;
       _this.isShowArea = false;
-      _this.info.area = '';
+      _this.info.area = "";
       _this.info.province = res[0].name;
       _this.info.city = res[1].name;
       for (var i = 0; i < res.length; i++) {
@@ -156,38 +211,44 @@ export default {
     // 提交表单
     submitFn() {
       var _this = this;
-      var reqUrl = "/index/appointment/noband_install";
-      var data = {
-        username: this.info.username,
-        phone: this.info.phone,
-        province:this.info.province,
-        city:this.info.city,
-        area: this.info.area,
-        // buy_agent:_this.info.agentValue,
-        buy_agent:'',
-        buy_agent_id:1,
-        install_address: this.info.install_address,
-        appoint_time: this.info.appoint_time,
-        baozhuang_img1:this.info.packingPic[0],
-        baozhuang_img2:this.info.packingPic[1],
-        baozhuang_img3:this.info.packingPic[2],
-        baozhuang_img4:this.info.packingPic[3],
-        huanjing_img1:this.info.InstallPic[0],
-        huanjing_img2:this.info.InstallPic[1],
-        huanjing_img3:this.info.InstallPic[2],
-        huanjing_img4:this.info.InstallPic[3],
-        baozhuang_beizhu:this.packingInfo.remark,
-        huanjing_beizhu:this.installInfo.remark,
-        width:this.installInfo.wide+'cm',
-        height:this.installInfo.long+'cm',
-      };
-      _this.$http.post(reqUrl, qs.stringify(data)).then(res => {
-        if (res.data.code == 200) {
-          _this.isShowSuccess = true;
-        } else {
-          _this.$dialog.alert({ message: res.data.msg });
+      _this.$validator.validateAll().then(result => {
+        console.log(result);
+        if (result) {
+          //axios提交
         }
       });
+      // var reqUrl = "/index/appointment/noband_install";
+      // var data = {
+      //   username: this.info.username,
+      //   phone: this.info.phone,
+      //   province:this.info.province,
+      //   city:this.info.city,
+      //   area: this.info.area,
+      //   // buy_agent:_this.info.agentValue,
+      //   buy_agent:'',
+      //   buy_agent_id:1,
+      //   install_address: this.info.install_address,
+      //   appoint_time: this.info.appoint_time,
+      //   baozhuang_img1:this.info.packingPic[0],
+      //   baozhuang_img2:this.info.packingPic[1],
+      //   baozhuang_img3:this.info.packingPic[2],
+      //   baozhuang_img4:this.info.packingPic[3],
+      //   huanjing_img1:this.info.InstallPic[0],
+      //   huanjing_img2:this.info.InstallPic[1],
+      //   huanjing_img3:this.info.InstallPic[2],
+      //   huanjing_img4:this.info.InstallPic[3],
+      //   baozhuang_beizhu:this.packingInfo.remark,
+      //   huanjing_beizhu:this.installInfo.remark,
+      //   width:this.installInfo.wide+'cm',
+      //   height:this.installInfo.long+'cm',
+      // };
+      // _this.$http.post(reqUrl, qs.stringify(data)).then(res => {
+      //   if (res.data.code == 200) {
+      //     _this.isShowSuccess = true;
+      //   } else {
+      //     _this.$dialog.alert({ message: res.data.msg });
+      //   }
+      // });
     },
     // 获取代理商列表
     getAgentFun() {
@@ -208,13 +269,13 @@ export default {
       _this.isShowAgent = true;
     },
     // 选择经销商
-    onCancelAgent(){
-        this.isShowAgent = false;
+    onCancelAgent() {
+      this.isShowAgent = false;
     },
     // 取消
-    onConfirm(val){
-        this.isShowAgent = false;
-        this.info.agentValue = val
+    onConfirm(val) {
+      this.isShowAgent = false;
+      this.info.agentValue = val;
     },
     // 监听子数据返回数据
     listData(res) {
@@ -222,6 +283,7 @@ export default {
     },
     // 跳转页面保存信息
     saveInfo() {
+      console.log(123);
       this.$store.commit({
         type: "saveFromData",
         fromData: this.info
@@ -232,10 +294,10 @@ export default {
     formInfo() {
       return this.$store.state.installMode.fromData;
     },
-    packingInfo(){
+    packingInfo() {
       return this.$store.state.installMode.parkingInfo;
     },
-    installInfo(){
+    installInfo() {
       return this.$store.state.installMode.installInfo;
     }
   }

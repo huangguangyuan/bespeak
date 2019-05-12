@@ -1,7 +1,8 @@
 <template>
   <div class="binding">
-    <van-nav-bar title="手机绑定" left-arrow fixed @click-left="onClickLeft"/>
-    <h5>绑定信息</h5>
+    <!-- <van-nav-bar title="手机绑定" fixed @click-left="onClickLeft"/> -->
+    <!-- <h5>绑定信息</h5> -->
+    <img src="@/assets/images/logo-buoy.png" alt="" class="logo-buoy">
     <div class="bindingFrom">
       <div>
         <span>+86</span>
@@ -9,7 +10,7 @@
       </div>
       <div>
         <input type="text" placeholder="请输入短信验证码" v-model="SMS">
-        <p @click="getCode" class="seedCode">发送验证码</p>
+        <p @click="getCode" class="seedCode">{{countDownTxt}}</p>
       </div>
       <van-button type="default" size="large" class="btn-custom" @click="bingFn">绑 定</van-button>
     </div>
@@ -24,11 +25,14 @@
   </div>
 </template>
 <script>
+import { setInterval, clearInterval } from 'timers';
 export default {
   data() {
     return {
       phone: "",
-      SMS: ""
+      SMS: "",
+      isClick:false,//是否已点击获取验证码
+      countDownTxt:'发送验证码',
     };
   },
   methods: {
@@ -39,12 +43,17 @@ export default {
     // 获取验证码
     getCode() {
       var _this = this;
+      if(_this.isClick){
+        return false;
+      }
       _this.$http
         .post("/index/applogin/getSmsCode", {
           phone: _this.phone
         })
         .then(res => {
           if (res.data.code == 200) {
+            _this.isClick = true;
+            _this.countDownFun();
             _this.$dialog.alert({
               title: "发送成功",
               message: "发送信息成功，请注意接收验证码~"
@@ -59,6 +68,21 @@ export default {
         .catch(err => {
           console.log(err);
         });
+    },
+    // 倒计时
+    countDownFun(){
+      var _this = this;
+      var num = 60;
+      var timer = setInterval(function(){
+        if(num<=0){
+          clearInterval(timer);
+          _this.countDownTxt = '发送验证码';
+          _this.isClick = false;
+          return false;
+        }
+        num --;
+        _this.countDownTxt = num+'(s)'
+      },1000);
     },
     // 绑定
     bingFn() {
@@ -105,6 +129,9 @@ export default {
   box-sizing: border-box;
   padding: 0 14px;
   background-color: #ededed;
+  .logo-buoy{
+    display: block;
+  }
   h5 {
     font-size: 19px;
     font-weight: 500;

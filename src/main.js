@@ -9,6 +9,7 @@ import Utile from './lib/utils'
 import 'vant/lib/index.css';
 import '@/assets/css/app.scss';
 import 'amfe-flexible';
+import '@/lib/validate.js'
 
 
 Vue.config.productionTip = false

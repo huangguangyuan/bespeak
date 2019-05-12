@@ -1,6 +1,6 @@
 <template>
   <div class="bespeakList">
-    <van-nav-bar title="快速预约" fixed/>
+    <!-- <van-nav-bar title="快速预约" fixed/> -->
     <van-cell-group>
       <van-cell title="快速报装" is-link size="large" :to="fromUrl"/>
       <van-cell title="预约维修" is-link size="large" to="/repairFrom"/>
@@ -35,7 +35,7 @@ export default {
   left: 0;
   box-sizing: border-box;
   background-color: #ededed;
-  padding-top: 46px;
+  // padding-top: 46px;
 }
 </style>
 
