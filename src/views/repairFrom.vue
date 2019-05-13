@@ -2,14 +2,31 @@
   <div class="repairFrom">
     <van-nav-bar title="快速维修" left-arrow fixed @click-left="onClickLeft"/>
     <van-cell-group>
-      <van-field label="报装人" placeholder="请填写报装人" v-model="info.username"/>
-      <van-field label="手机号" placeholder="请填写手机号" v-model="info.phone"/>
+      <van-field 
+        label="报装人" 
+        placeholder="请填写报装人" 
+        v-model="info.username"
+        v-validate="'required'"
+        name="username"
+        :error-message="errors.first('username')"
+      />
+      <van-field 
+        label="手机号" 
+        placeholder="请填写手机号" 
+        v-model="info.phone"
+        v-validate="'required|mobile'"
+        name="contactPhone"
+        :error-message="errors.first('contactPhone')"
+      />
       <van-field
         label="区域选择"
         placeholder="请选择省、市、区县"
         readonly
         @click="selectArea"
         v-model="info.area"
+        v-validate="'required'"
+        name="area"
+        :error-message="errors.first('area')"
       >
         <van-icon slot="icon" name="arrow"/>
       </van-field>
@@ -20,6 +37,9 @@
         autosize
         placeholder="请填写详细地址"
         v-model="info.address"
+        v-validate="'required'"
+        name="address"
+        :error-message="errors.first('address')"
       />
       <van-field
         label="安装地址"
@@ -28,27 +48,51 @@
         autosize
         placeholder="请填写安装地址"
         v-model="info.install_address"
+        v-validate="'required'"
+        name="install_address"
+        :error-message="errors.first('install_address')"
       />
-      <van-cell title="商品订单号" v-if='isShowOrderId' is-link to="/commodityDetails" @click="saveInfo">
-        <template slot="title">
-          <span style="width:90px;display: inline-block;">商品订单号</span>
-          <span style="padding:0 3px" v-for="item in info.install_orders_id">{{item}}</span>
-        </template>
-      </van-cell>
-      <van-cell title="故障描述" is-link to="/uploader3" @click="saveInfo" :value="faultInfo.remark"></van-cell>
+      <van-field
+        label="商品订单号"
+        placeholder="请选择商品"
+        readonly
+        @click="saveInfo();$router.push({path:'/commodityDetails'})"
+        v-model="info.install_orders_id.join(',')"
+        v-validate="'required'"
+        name="orders_id"
+        :error-message="errors.first('orders_id')"
+       >
+        <van-icon slot="icon" name="arrow"/>
+      </van-field>
+
+      <van-field
+        label="故障描述"
+        placeholder="故障描述"
+        readonly
+        @click="saveInfo();$router.push({path:'/uploader3'})"
+        v-model="faultInfo.remark"
+        v-validate="'required'"
+        name="remark"
+        :error-message="errors.first('remark')"
+       >
+        <van-icon slot="icon" name="arrow"/>
+      </van-field>
       <van-field
         label="预约时间"
         readonly
         placeholder="请选择预约时间"
         @click="timeParameter.isShowTime = true"
         v-model="info.appoint_time"
+        v-validate="'required'"
+        name="appoint_time"
+        :error-message="errors.first('appoint_time')"
       >
         <van-icon slot="icon" name="arrow"/>
       </van-field>
     </van-cell-group>
     <div class="btn-ground">
-      <van-button type="primary" size="large" class="btn-custom" @click="submitFn">确认</van-button>
-      <van-button size="large" class="cancelBtn">取消</van-button>
+      <van-button type="primary" size="large" class="btn-custom" @click="validatorFun">确认</van-button>
+      <!-- <van-button size="large" class="cancelBtn">取消</van-button> -->
     </div>
     <!-- 选择省、市、区 -->
     <van-popup v-model="isShowArea" position="bottom">
@@ -88,11 +132,13 @@
       <van-icon name="checked" size="120px" color="#ff4e1f"/>
       <h3>预约成功</h3>
     </van-popup>
+    <loading v-if='isShowloading'></loading>
   </div>
 </template>
 <script>
 import qs from "qs";
 import areaList from "@/lib/ares.js";
+import loading from '@/components/loading.vue';
 export default {
   name: "repairFrom",
   data() {
@@ -110,6 +156,7 @@ export default {
       },
       isShowSuccess: false, //是否显示成功
       isShowAgent: false, //是否显示经销商列表
+      isShowloading:false,//是否显示loading页
       info: {
         username: "",
         phone: "",
@@ -140,7 +187,7 @@ export default {
   methods: {
     // 顶部返回按钮
     onClickLeft() {
-      this.$router.go(-1);
+      this.$router.push({path:'/bespeakList'});
     },
     // 选择省市区
     selectArea() {
@@ -166,9 +213,20 @@ export default {
       _this.timeParameter.isShowTime = false;
       _this.info.appoint_time = _this.$toolFn.timeFormat(res);
     },
+    // 校验数据
+    validatorFun() {
+      var _this = this;
+      _this.$validator.validateAll().then(result => {
+        if (result) {
+          //axios提交
+          _this.submitFn();
+        }
+      });
+    },
     // 提交表单
     submitFn() {
       var _this = this;
+      _this.isShowloading = true;
       var reqUrl = "/index/appointment/repare";
       var data = {
         username: this.info.username,
@@ -192,6 +250,7 @@ export default {
       _this.$http.post(reqUrl, qs.stringify(data)).then(res => {
         console.log(res);
         if (res.data.code == 200) {
+          _this.isShowloading = false;
           _this.isShowSuccess = true;
         } else {
           _this.$dialog.alert({ message: res.data.msg });
@@ -233,6 +292,9 @@ export default {
     ordersId(){
         return this.$store.state.installMode.installOrdersId;
     },
+  },
+  components:{
+      loading
   }
 };
 </script>
@@ -240,7 +302,7 @@ export default {
 .repairFrom {
   position: absolute;
   width: 100%;
-  height: 100%;
+  min-height: 100vh;
   top: 0;
   left: 0;
   box-sizing: border-box;

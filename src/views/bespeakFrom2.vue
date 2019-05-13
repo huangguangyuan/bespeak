@@ -84,15 +84,15 @@
         @click="timeParameter.isShowTime = true"
         v-model="info.appoint_time"
         v-validate="'required'"
-        name="install_address"
-        :error-message="errors.first('install_address')"
+        name="appoint_time"
+        :error-message="errors.first('appoint_time')"
       >
         <van-icon slot="icon" name="arrow"/>
       </van-field>
     </van-cell-group>
     <div class="btn-ground">
-      <van-button type="primary" size="large" class="btn-custom" @click="submitFn">确认</van-button>
-      <van-button size="large" class="cancelBtn">取消</van-button>
+      <van-button type="primary" size="large" class="btn-custom" @click="validatorFun">确认</van-button>
+      <!-- <van-button size="large" class="cancelBtn">取消</van-button> -->
     </div>
     <!-- 选择省、市、区 -->
     <van-popup v-model="isShowArea" position="bottom">
@@ -132,11 +132,13 @@
       <van-icon name="checked" size="120px" color="#ff4e1f"/>
       <h3>预约成功</h3>
     </van-popup>
+    <loading v-if='isShowloading'></loading>
   </div>
 </template>
 <script>
 import qs from "qs";
 import areaList from "@/lib/ares.js";
+import loading from '@/components/loading.vue';
 export default {
   data() {
     return {
@@ -152,6 +154,7 @@ export default {
       },
       isShowSuccess: false, //是否显示成功
       isShowAgent: false, //是否显示经销商列表
+      isShowloading:false,//是否显示loading页
       info: {
         username: "",
         phone: "",
@@ -175,14 +178,12 @@ export default {
     }
     _this.info.packingPic = _this.packingInfo.picData;
     _this.info.InstallPic = _this.installInfo.picData;
-    console.log(_this.packingInfo);
-    // 获取经销商列表
-    _this.getAgentFun();
+    _this.getAgentFun();// 获取经销商列表
   },
   methods: {
     // 顶部返回按钮
     onClickLeft() {
-      this.$router.go(-1);
+      this.$router.push({path:'/bespeakList'});
     },
     // 选择省市区
     selectArea() {
@@ -208,47 +209,54 @@ export default {
       _this.timeParameter.isShowTime = false;
       _this.info.appoint_time = _this.$toolFn.timeFormat(res);
     },
-    // 提交表单
-    submitFn() {
+    // 校验数据
+    validatorFun() {
       var _this = this;
       _this.$validator.validateAll().then(result => {
         console.log(result);
         if (result) {
           //axios提交
+          _this.submitFn();
         }
       });
-      // var reqUrl = "/index/appointment/noband_install";
-      // var data = {
-      //   username: this.info.username,
-      //   phone: this.info.phone,
-      //   province:this.info.province,
-      //   city:this.info.city,
-      //   area: this.info.area,
-      //   // buy_agent:_this.info.agentValue,
-      //   buy_agent:'',
-      //   buy_agent_id:1,
-      //   install_address: this.info.install_address,
-      //   appoint_time: this.info.appoint_time,
-      //   baozhuang_img1:this.info.packingPic[0],
-      //   baozhuang_img2:this.info.packingPic[1],
-      //   baozhuang_img3:this.info.packingPic[2],
-      //   baozhuang_img4:this.info.packingPic[3],
-      //   huanjing_img1:this.info.InstallPic[0],
-      //   huanjing_img2:this.info.InstallPic[1],
-      //   huanjing_img3:this.info.InstallPic[2],
-      //   huanjing_img4:this.info.InstallPic[3],
-      //   baozhuang_beizhu:this.packingInfo.remark,
-      //   huanjing_beizhu:this.installInfo.remark,
-      //   width:this.installInfo.wide+'cm',
-      //   height:this.installInfo.long+'cm',
-      // };
-      // _this.$http.post(reqUrl, qs.stringify(data)).then(res => {
-      //   if (res.data.code == 200) {
-      //     _this.isShowSuccess = true;
-      //   } else {
-      //     _this.$dialog.alert({ message: res.data.msg });
-      //   }
-      // });
+    },
+    // 提交表单
+    submitFn(){
+      var _this = this;
+      _this.isShowloading = true;
+      var reqUrl = "/index/appointment/noband_install";
+      var data = {
+        username: this.info.username,
+        phone: this.info.phone,
+        province:this.info.province,
+        city:this.info.city,
+        area: this.info.area,
+        // buy_agent:_this.info.agentValue,
+        buy_agent:'',
+        buy_agent_id:1,
+        install_address: this.info.install_address,
+        appoint_time: this.info.appoint_time,
+        baozhuang_img1:this.info.packingPic[0],
+        baozhuang_img2:this.info.packingPic[1],
+        baozhuang_img3:this.info.packingPic[2],
+        baozhuang_img4:this.info.packingPic[3],
+        huanjing_img1:this.info.InstallPic[0],
+        huanjing_img2:this.info.InstallPic[1],
+        huanjing_img3:this.info.InstallPic[2],
+        huanjing_img4:this.info.InstallPic[3],
+        baozhuang_beizhu:this.packingInfo.remark,
+        huanjing_beizhu:this.installInfo.remark,
+        width:this.installInfo.wide+'cm',
+        height:this.installInfo.long+'cm',
+      };
+      _this.$http.post(reqUrl, qs.stringify(data)).then(res => {
+        if (res.data.code == 200) {
+          _this.isShowloading = false;
+          _this.isShowSuccess = true;
+        } else {
+          _this.$dialog.alert({ message: res.data.msg });
+        }
+      });
     },
     // 获取代理商列表
     getAgentFun() {
@@ -256,6 +264,7 @@ export default {
       var reqUrl = "/index/appointment/agent_info";
       var data = {};
       _this.$http.post(reqUrl, data).then(res => {
+        console.log(res);
         if (res.data.code == 200) {
           _this.agentList = res.data.data.map(item => {
             return item.store;
@@ -300,6 +309,9 @@ export default {
     installInfo() {
       return this.$store.state.installMode.installInfo;
     }
+  },
+  components:{
+      loading
   }
 };
 </script>
@@ -307,7 +319,7 @@ export default {
 .bespeakFrom {
   position: absolute;
   width: 100%;
-  height: 100%;
+  min-height: 100vh;
   top: 0;
   left: 0;
   box-sizing: border-box;
@@ -315,7 +327,7 @@ export default {
   padding-top: 46px;
   .btn-ground {
     width: 350px;
-    margin: 40px auto 0;
+    margin: 40px auto 40px;
   }
   .cancelBtn {
     margin-top: 20px;

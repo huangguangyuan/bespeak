@@ -6,7 +6,7 @@
     <div class="banner">待受理</div>
     <!-- 内容 -->
     <ul class="list">
-      <li v-for="(item,index) in dataList" :key="index">
+      <li v-for="(item,index) in queryTableDate" :key="index">
         <div class="container">
           <div class="info">
             <van-icon name="map-marked" color="#fa4521" size="28px"/>
@@ -36,6 +36,10 @@
         </div>-->
       </li>
     </ul>
+    <!-- 分页 -->
+    <div class="pagination">
+      <van-pagination v-model="currentPage" :page-count="pageTotal" :show-page-size="pageSize" force-ellipses/>
+    </div>
     <!-- 按钮 -->
     <div class="btn-ground">
       <van-button type="primary" size="large" class="btn-custom" @click="confirmFn">确认</van-button>
@@ -44,11 +48,14 @@
   </div>
 </template>
 <script>
-import { setTimeout } from 'timers';
+import { setTimeout } from "timers";
 export default {
   data() {
     return {
-      dataList: [] //数据列表
+      dataList: [], //数据列表
+      currentPage:1,//当前页数
+      pageSize: 3, //页面数据多少
+      total: 0, //总计
     };
   },
   mounted() {
@@ -67,15 +74,7 @@ export default {
           if (res.data.code == 200) {
             _this.dataList = res.data.data;
             _this.dataList.checked = false;
-          } else {
-            _this.$dialog
-              .alert({
-                title: "提 示",
-                message: "您还没绑定手机号，现在去绑定"
-              })
-              .then(() => {
-                _this.$router.push({ path: "/binding" });
-              });
+            _this.total = _this.dataList.length;
           }
         })
         .catch(err => {
@@ -101,15 +100,27 @@ export default {
         return false;
       }
       _this.$store.commit({
-        type:'getOrdersId',
-        installOrdersId:idList,
-      })
+        type: "getOrdersId",
+        installOrdersId: idList
+      });
       _this.$router.go(-1);
-      
     },
     // 返回按钮
     onClickLeft() {
       this.$router.go(-1);
+    }
+  },
+  computed:{
+    queryTableDate() {
+      var _this = this;
+      var begin = (_this.currentPage - 1) * _this.pageSize;
+      var end = _this.currentPage * _this.pageSize;
+      return _this.dataList.slice(begin, end);
+    },
+    pageTotal() {
+      var _this = this;
+      var pageTotal = Math.ceil(_this.total / _this.pageSize);
+      return pageTotal;
     }
   }
 };
@@ -205,6 +216,7 @@ export default {
       margin-top: 20px;
     }
   }
+  .pagination{width: 350px;margin: 40px auto 0;background-color: #ffffff;}
 }
 </style>
 

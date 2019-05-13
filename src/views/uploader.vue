@@ -47,7 +47,7 @@ export default {
   },
   mounted(){
       var _this = this;
-      _this.infoData = _this.packingInfo;
+      // _this.infoData = _this.packingInfo;
   },
   methods: {
     // 顶部返回按钮

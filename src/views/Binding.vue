@@ -35,6 +35,15 @@ export default {
       countDownTxt:'发送验证码',
     };
   },
+  mounted(){
+    var _this = this;
+    _this.$http.post('/index/applogin/login',{}).then(res=>{
+      if(res.data.code == 200){
+        sessionStorage.setItem("isType", res.data.data.user_type);
+        _this.$router.push({path:'/bespeakList'});
+      }
+    })
+  },
   methods: {
     // 返回按钮
     onClickLeft() {
@@ -95,7 +104,6 @@ export default {
       _this.$http
         .post(reqUrl, data)
         .then(res => {
-          console.log(res);
           if (res.data.code == 200) {
             sessionStorage.setItem("isType", res.data.data.user_type);
             _this.$dialog
