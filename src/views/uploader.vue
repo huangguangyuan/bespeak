@@ -27,7 +27,7 @@
   </div>
 </template>
 <script>
-import lrz from "lrz";
+import lrz from 'lrz';
 export default {
   name: "uploader",
   data() {

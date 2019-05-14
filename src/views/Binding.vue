@@ -114,6 +114,11 @@ export default {
               .then(res => {
                 _this.$router.push({path:'/bespeakList'});
               });
+          }else{
+            _this.$dialog.alert({
+              title: "绑定失败",
+              message: res.data.msg
+            });
           }
         })
         .catch(err => {

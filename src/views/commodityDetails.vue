@@ -21,24 +21,30 @@
           <div class="proInfo">
             <p>
               <span>ID 号: {{item.id}}</span>
-              <span>产品信息: {{item.buyer_msg}}</span>
-              <span>门店信息: {{item.store}}</span>
-              <span>物流信息: {{item.logistics_company}}</span>
+              <span>产品名称: {{item.goods_name}}</span>
+              <span>产品型号: {{item.pro_siez}}</span>
+              <span>产品颜色: {{item.color}}</span>
             </p>
             <van-checkbox v-model="item.checked" checked-color="#fb2812"></van-checkbox>
           </div>
         </div>
-        <!-- <div class="remarks">
-                    <p>获取后台该下单时的全部备注信息</p>
-                </div>
-                <div class="logistics">
-                    <p>获取后台该下单时的全部备注信息</p>
-        </div>-->
+        <div class="remarks">
+          <p>买家留言：{{item.buyer_msg}}</p>
+          <p>卖家备注：{{item.buyer_remarks}}</p>
+        </div>
+        <div class="logistics">
+          <p>物流状态：{{item.express_status}}</p>
+        </div>
       </li>
     </ul>
     <!-- 分页 -->
     <div class="pagination">
-      <van-pagination v-model="currentPage" :page-count="pageTotal" :show-page-size="pageSize" force-ellipses/>
+      <van-pagination
+        v-model="currentPage"
+        :page-count="pageTotal"
+        :show-page-size="pageSize"
+        force-ellipses
+      />
     </div>
     <!-- 按钮 -->
     <div class="btn-ground">
@@ -53,9 +59,9 @@ export default {
   data() {
     return {
       dataList: [], //数据列表
-      currentPage:1,//当前页数
+      currentPage: 1, //当前页数
       pageSize: 3, //页面数据多少
-      total: 0, //总计
+      total: 0 //总计
     };
   },
   mounted() {
@@ -110,7 +116,7 @@ export default {
       this.$router.go(-1);
     }
   },
-  computed:{
+  computed: {
     queryTableDate() {
       var _this = this;
       var begin = (_this.currentPage - 1) * _this.pageSize;
@@ -193,7 +199,7 @@ export default {
       margin-top: 10px;
       p {
         font-size: 14px;
-        color: #e0e0e0;
+        color: #202020;
       }
     }
     .logistics {
@@ -205,7 +211,7 @@ export default {
       margin-top: 10px;
       p {
         font-size: 14px;
-        color: #e0e0e0;
+        color: #202020;
       }
     }
   }
@@ -216,7 +222,11 @@ export default {
       margin-top: 20px;
     }
   }
-  .pagination{width: 350px;margin: 40px auto 0;background-color: #ffffff;}
+  .pagination {
+    width: 350px;
+    margin: 40px auto 0;
+    background-color: #ffffff;
+  }
 }
 </style>
 

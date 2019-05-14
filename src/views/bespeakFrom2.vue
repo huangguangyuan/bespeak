@@ -139,6 +139,7 @@
 import qs from "qs";
 import areaList from "@/lib/ares.js";
 import loading from '@/components/loading.vue';
+import { setTimeout } from 'timers';
 export default {
   data() {
     return {
@@ -253,6 +254,9 @@ export default {
         if (res.data.code == 200) {
           _this.isShowloading = false;
           _this.isShowSuccess = true;
+          setTimeout(function(){
+            _this.$router.push({path:'/bespeakDetails'});
+          },3000);
         } else {
           _this.$dialog.alert({ message: res.data.msg });
         }

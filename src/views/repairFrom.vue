@@ -252,6 +252,9 @@ export default {
         if (res.data.code == 200) {
           _this.isShowloading = false;
           _this.isShowSuccess = true;
+          setTimeout(function(){
+            _this.$router.push({path:'/bespeakDetails'});
+          },3000);
         } else {
           _this.$dialog.alert({ message: res.data.msg });
         }
