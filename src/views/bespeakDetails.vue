@@ -10,10 +10,10 @@
         </div>
         <div class="content">
           <h5>{{item.install_type==1?'安装':'维修'}}</h5>
-          <a href="javascript:;">
+          <div class="dial" @click='dialFun(item.id)'>
             <van-icon name="phone" />
             <span>拨 号</span>
-          </a>
+          </div>
           <p>{{item.txt}}</p>
           <van-button plain size="small" @click="clickFun(item)">{{item.install_status_words}}</van-button>
         </div>
@@ -73,13 +73,39 @@ export default {
     },
     clickFun(res) {
       var _this = this;
-      if (res.install_status == 2) {
-        _this.$store.commit({
-          type: "saveEvaluateInfo",
-          evaluateInfo: res
-        });
-        _this.$router.push({ path: "/evaluateFrom" });
+      _this.$store.commit({
+        type: "getOrderID",
+        orderID: res.id
+      });
+      switch(res.install_status)
+      {
+        case 0:
+          _this.$router.push({ path: "/orderDetails" });
+          break;
+        case 1:
+          _this.$router.push({ path: "/orderDetails" });
+          break;
+        case 2:
+          _this.$router.push({ path: "/evaluateFrom" });
+          break;
+        case 3:
+          _this.$router.push({ path: "/orderDetails" });
+          break;
       }
+      
+    },
+    // 拨号
+    dialFun(id){
+      var _this = this;
+      var reqUrl = '/index/appointment/userCallInstaller';
+      var data = {id:id}
+      _this.$http.post(reqUrl,data).then(res => {
+        if(res.data.code == 200){
+          window.location.href = "tel:"+res.data.data.phone_x;
+        }else{
+          _this.$dialog.alert({message:res.data.msg});
+        }
+      })
     }
   }
 };
@@ -128,7 +154,7 @@ export default {
       .content {
         padding-bottom: 30px;
         width: 500px;
-        a{
+        .dial{
           border-radius: 8px;font-size: 12px;margin: 10px 0;display: flex;justify-content: center;align-content: center;color: #fe491f;align-items: center;border:1px #fe491f solid;width: 60px;
         }
         h5 {

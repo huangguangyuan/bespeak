@@ -84,5 +84,12 @@ export default new Router({
       meta:{index:5},
       component: () => import('./views/evaluateFrom.vue')
     },
+    // 预约详情
+    {
+      path:'/orderDetails',
+      name:'orderDetails',
+      meta:{index:5},
+      component: () => import('./views/orderDetails.vue')
+    },
   ]
 })

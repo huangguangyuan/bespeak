@@ -27,7 +27,7 @@ let myVue = new Vue({
 // 添加响应拦截器
 axios.interceptors.response.use(function (response) {
   // 对响应数据做点什么
-  console.log(response);
+  // console.log(response);
   if(response.data.code === -1){
     router.replace({
       path: '/' // 到登录页重新获取token

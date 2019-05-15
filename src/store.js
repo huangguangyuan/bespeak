@@ -5,6 +5,7 @@ Vue.use(Vuex);
 
 let installMode = {
   state: {
+    orderID:0,//订单ID号
     installOrdersId: [],//商品订到号ID
     fromData: {},//快速报装信息
     parkingInfo: {
@@ -47,7 +48,10 @@ let installMode = {
     },
     saveEvaluateInfo(state, payload){
       state.evaluateInfo = payload.evaluateInfo
-    }
+    },
+    getOrderID(state, payload){
+      state.orderID = payload.orderID;
+    },
   }
 }
 
