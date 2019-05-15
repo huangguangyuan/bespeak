@@ -5,7 +5,7 @@
       <li v-for="(item, index) in pictureSrc" :key="index">
         <van-uploader :name="item.num" :after-read="onRead">
           <van-icon name="photograph" color="#d8d7d7"/>
-          <p>添加包装图片</p>
+          <p>{{item.txt}}</p>
         </van-uploader>
         <img :src="item.src" alt v-show="item.isShow">
       </li>
@@ -33,10 +33,10 @@ export default {
   data() {
     return {
       pictureSrc: [
-        { num: "0", src: "", isShow: false },
-        { num: "1", src: "", isShow: false },
-        { num: "2", src: "", isShow: false },
-        { num: "3", src: "", isShow: false }
+        { num: "0", src: "", isShow: false,txt:'原门锁，门前照片' },
+        { num: "1", src: "", isShow: false,txt:'原门锁，门后照片' },
+        { num: "2", src: "", isShow: false,txt:'原门锁，门前照片' },
+        { num: "3", src: "", isShow: false,txt:'原门锁，门后照片' }
       ],
       infoData: {
         type: "packing",
@@ -73,6 +73,16 @@ export default {
     // 保存图片
     saveFun() {
       var _this = this;
+      if(_this.infoData.picData[0] == "" && _this.infoData.picData[2] == ""){
+        _this.$dialog.alert({message:'请上传：原门锁，门前照片'});
+        return false;
+      }else if(_this.infoData.picData[1] == "" && _this.infoData.picData[3] == ""){
+        _this.$dialog.alert({message:'请上传：原门锁，门后照片'});
+        return false;
+      }else if(_this.infoData.remark == ""){
+        _this.$dialog.alert({message:'请填写备注'});
+        return false;
+      }
       _this.$store.commit({
         type: "saveParkingInfo",
         parkingInfo: _this.infoData

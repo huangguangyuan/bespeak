@@ -10,6 +10,10 @@
         </div>
         <div class="content">
           <h5>{{item.install_type==1?'安装':'维修'}}</h5>
+          <a href="javascript:;">
+            <van-icon name="phone" />
+            <span>拨 号</span>
+          </a>
           <p>{{item.txt}}</p>
           <van-button plain size="small" @click="clickFun(item)">{{item.install_status_words}}</van-button>
         </div>
@@ -64,15 +68,6 @@ export default {
             }
             return item;
           });
-        } else {
-          _this.$dialog
-            .alert({
-              title: "提 示",
-              message: "您还没绑定手机号，现在去绑定"
-            })
-            .then(() => {
-              _this.$router.push({ path: "/binding" });
-            });
         }
       });
     },
@@ -133,6 +128,9 @@ export default {
       .content {
         padding-bottom: 30px;
         width: 500px;
+        a{
+          border-radius: 8px;font-size: 12px;margin: 10px 0;display: flex;justify-content: center;align-content: center;color: #fe491f;align-items: center;border:1px #fe491f solid;width: 60px;
+        }
         h5 {
           font-size: 14px;
         }
@@ -140,6 +138,7 @@ export default {
           font-size: 12px;
           margin: 10px 0;
         }
+        button{color: #fe491f;}
       }
     }
   }

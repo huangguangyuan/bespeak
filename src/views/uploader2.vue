@@ -74,6 +74,23 @@ export default {
     // 保存图片
     saveFun(){
         var _this = this;
+        if(_this.infoData.picData[0] == "" && _this.infoData.picData[2] == ""){
+        _this.$dialog.alert({message:'请上传：原门锁，门前照片'});
+        return false;
+      }else if(_this.infoData.picData[1] == "" && _this.infoData.picData[3] == ""){
+        _this.$dialog.alert({message:'请上传：原门锁，门后照片'});
+        return false;
+      }else if(_this.infoData.long == ""){
+        _this.$dialog.alert({message:'请填写长度'});
+        return false;
+      }else if(_this.infoData.wide == ""){
+        _this.$dialog.alert({message:'请填写宽度'});
+        return false;
+      }else if(_this.infoData.remark == ""){
+        _this.$dialog.alert({message:'请填写备注'});
+        return false;
+      }
+
         _this.$store.commit({
             type:'saveInstallInfo',
             installInfo:_this.infoData
