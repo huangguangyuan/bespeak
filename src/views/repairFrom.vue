@@ -2,17 +2,17 @@
   <div class="repairFrom">
     <van-nav-bar title="快速维修" left-arrow fixed @click-left="onClickLeft"/>
     <van-cell-group>
-      <van-field 
-        label="报装人" 
-        placeholder="请填写报装人" 
+      <van-field
+        label="报装人"
+        placeholder="请填写报装人"
         v-model="info.username"
         v-validate="'required'"
         name="username"
         :error-message="errors.first('username')"
       />
-      <van-field 
-        label="手机号" 
-        placeholder="请填写手机号" 
+      <van-field
+        label="手机号"
+        placeholder="请填写手机号"
         v-model="info.phone"
         v-validate="'required|mobile'"
         name="contactPhone"
@@ -53,7 +53,7 @@
         :error-message="errors.first('install_address')"
       />
       <van-field
-        label="商品订单号"
+        label="商品详情"
         placeholder="请选择商品"
         readonly
         @click="saveInfo();$router.push({path:'/commodityDetails'})"
@@ -61,7 +61,7 @@
         v-validate="'required'"
         name="orders_id"
         :error-message="errors.first('orders_id')"
-       >
+      >
         <van-icon slot="icon" name="arrow"/>
       </van-field>
 
@@ -74,7 +74,7 @@
         v-validate="'required'"
         name="remark"
         :error-message="errors.first('remark')"
-       >
+      >
         <van-icon slot="icon" name="arrow"/>
       </van-field>
       <van-field
@@ -132,20 +132,20 @@
       <van-icon name="checked" size="120px" color="#ff4e1f"/>
       <h3>预约成功</h3>
     </van-popup>
-    <loading v-if='isShowloading'></loading>
+    <loading v-if="isShowloading"></loading>
   </div>
 </template>
 <script>
 import qs from "qs";
 import areaList from "@/lib/ares.js";
-import loading from '@/components/loading.vue';
+import loading from "@/components/loading.vue";
 export default {
   name: "repairFrom",
   data() {
     return {
       isShowArea: false,
       areaList: areaList,
-      isShowOrderId:true,
+      isShowOrderId: true,
       timeParameter: {
         isShowTime: false,
         minHour: 10,
@@ -156,17 +156,17 @@ export default {
       },
       isShowSuccess: false, //是否显示成功
       isShowAgent: false, //是否显示经销商列表
-      isShowloading:false,//是否显示loading页
+      isShowloading: false, //是否显示loading页
       info: {
         username: "",
         phone: "",
-        province:'',
-        city:'',
+        province: "",
+        city: "",
         area: "",
         address: "",
         areaValue: "",
         install_address: "",
-        install_orders_id:[],
+        install_orders_id: [],
         packingPic: ["", "", "", ""],
         appoint_time: ""
       }, //表单信息
@@ -175,7 +175,7 @@ export default {
   },
   mounted() {
     var _this = this;
-    if(sessionStorage.getItem("isType") == 'noband'){
+    if (sessionStorage.getItem("isType") == "noband") {
       _this.isShowOrderId = false;
     }
     if (JSON.stringify(_this.formInfo) != "{}") {
@@ -187,7 +187,7 @@ export default {
   methods: {
     // 顶部返回按钮
     onClickLeft() {
-      this.$router.push({path:'/bespeakList'});
+      this.$router.push({ path: "/bespeakList" });
     },
     // 选择省市区
     selectArea() {
@@ -198,7 +198,7 @@ export default {
     getArea(res) {
       var _this = this;
       _this.isShowArea = false;
-      _this.info.area = '';
+      _this.info.area = "";
       _this.info.province = res[0].name;
       _this.info.city = res[1].name;
       for (var i = 0; i < res.length; i++) {
@@ -231,8 +231,8 @@ export default {
       var data = {
         username: this.info.username,
         phone: this.info.phone,
-        province:this.info.province,
-        city:this.info.city,
+        province: this.info.province,
+        city: this.info.city,
         area: this.info.area,
         buy_agent: "广东省深圳市福田区赛格广场店",
         buy_agent_id: 1,
@@ -243,8 +243,8 @@ export default {
         baozhuang_img3: this.info.packingPic[2],
         baozhuang_img4: this.info.packingPic[3],
         description: this.faultInfo.remark,
-        address:this.info.address,
-        install_orders_id:this.info.install_orders_id
+        address: this.info.address,
+        install_orders_id: this.info.install_orders_id
       };
       console.log(data);
       _this.$http.post(reqUrl, qs.stringify(data)).then(res => {
@@ -252,9 +252,10 @@ export default {
         if (res.data.code == 200) {
           _this.isShowloading = false;
           _this.isShowSuccess = true;
-          setTimeout(function(){
-            _this.$router.push({path:'/bespeakDetails'});
-          },3000);
+          _this.emptyFun();
+          setTimeout(function() {
+            _this.$router.push({ path: "/bespeakDetails" });
+          }, 3000);
         } else {
           _this.$dialog.alert({ message: res.data.msg });
         }
@@ -283,6 +284,37 @@ export default {
         type: "saveFromData",
         fromData: this.info
       });
+    },
+    // 清空数据
+    emptyFun() {
+      this.$store.commit({
+        type: "saveFromData",
+        fromData: {
+          username: "",
+          phone: "",
+          province: "",
+          city: "",
+          area: "",
+          address: "",
+          areaValue: "",
+          install_address: "",
+          install_orders_id: [],
+          packingPic: ["", "", "", ""],
+          appoint_time: ""
+        }
+      });
+      _this.$store.commit({
+        type: "getOrdersId",
+        installOrdersId: []
+      });
+      _this.$store.commit({
+        type: "saveFaultInfo",
+        faultInfo: {
+          type: "packing",
+          picData: ["", "", "", ""],
+          remark: ""
+        }
+      });
     }
   },
   computed: {
@@ -292,12 +324,12 @@ export default {
     faultInfo() {
       return this.$store.state.installMode.faultInfo;
     },
-    ordersId(){
-        return this.$store.state.installMode.installOrdersId;
-    },
+    ordersId() {
+      return this.$store.state.installMode.installOrdersId;
+    }
   },
-  components:{
-      loading
+  components: {
+    loading
   }
 };
 </script>

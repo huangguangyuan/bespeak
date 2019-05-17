@@ -29,8 +29,8 @@
           </div>
         </div>
         <div class="remarks">
-          <p>买家留言：{{item.buyer_msg}}</p>
-          <p>卖家备注：{{item.buyer_remarks}}</p>
+          <p>{{item.buyer_msg}}</p>
+          <p>{{item.buyer_remarks}}</p>
         </div>
         <div class="logistics">
           <p>物流状态：{{item.express_status}}</p>

@@ -53,7 +53,7 @@
         :error-message="errors.first('install_address')"
       />
       <van-field
-        label="商品订单号"
+        label="商品详情"
         placeholder="请选择商品"
         readonly
         @click="saveFromDataFun();$router.push({path:'/commodityDetails'})"
@@ -109,13 +109,13 @@
       <van-icon name="checked" size="120px" color="#ff4e1f"/>
       <h3>预约成功</h3>
     </van-popup>
-    <loading v-if='isShowloading'></loading>
+    <loading v-if="isShowloading"></loading>
   </div>
 </template>
 <script>
 import qs from "qs";
 import areaList from "@/lib/ares.js";
-import loading from '@/components/loading.vue';
+import loading from "@/components/loading.vue";
 export default {
   data() {
     return {
@@ -130,7 +130,7 @@ export default {
         currentDate: new Date()
       },
       isShowSuccess: false, //是否显示成功
-      isShowloading:false,//是否显示loading页
+      isShowloading: false, //是否显示loading页
       info: {
         username: "",
         phone: "",
@@ -155,7 +155,7 @@ export default {
   methods: {
     // 顶部返回按钮
     onClickLeft() {
-      this.$router.push({path:'/bespeakList'});
+      this.$router.push({ path: "/bespeakList" });
     },
     // 选择省市区
     selectArea() {
@@ -209,11 +209,12 @@ export default {
       };
       _this.$http.post(reqUrl, qs.stringify(data)).then(res => {
         if (res.data.code == 200) {
-            _this.isShowloading = false;
+          _this.isShowloading = false;
           _this.isShowSuccess = true;
-          setTimeout(function(){
-            _this.$router.push({path:'/bespeakDetails'});
-          },3000);
+          _this.emptyFun();
+          setTimeout(function() {
+            _this.$router.push({ path: "/bespeakDetails" });
+          }, 3000);
         } else {
           _this.$dialog.alert({ message: res.data.msg });
         }
@@ -226,6 +227,28 @@ export default {
         type: "saveFromData",
         fromData: _this.info
       });
+    },
+    // 清空数据
+    emptyFun() {
+      _this.$store.commit({
+        type: "saveFromData",
+        fromData: {
+          username: "",
+          phone: "",
+          area: "",
+          province: "",
+          city: "",
+          areaValue: "",
+          address: "",
+          install_address: "",
+          install_orders_id: [],
+          appoint_time: ""
+        }
+      });
+      _this.$store.commit({
+        type: "getOrdersId",
+        installOrdersId: []
+      });
     }
   },
   computed: {
@@ -236,8 +259,8 @@ export default {
       return this.$store.state.installMode.fromData;
     }
   },
-  components:{
-      loading
+  components: {
+    loading
   }
 };
 </script>

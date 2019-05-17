@@ -46,7 +46,7 @@ export default {
           _this.dataList = res.data.data.map(item => {
             switch (item.install_status) {
               case 0:
-                item.install_status_words = "未开始";
+                item.install_status_words = "未受理";
                 break;
               case 1:
                 item.install_status_words = "已接单";

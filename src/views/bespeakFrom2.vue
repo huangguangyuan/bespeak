@@ -132,14 +132,14 @@
       <van-icon name="checked" size="120px" color="#ff4e1f"/>
       <h3>预约成功</h3>
     </van-popup>
-    <loading v-if='isShowloading'></loading>
+    <loading v-if="isShowloading"></loading>
   </div>
 </template>
 <script>
 import qs from "qs";
 import areaList from "@/lib/ares.js";
-import loading from '@/components/loading.vue';
-import { setTimeout } from 'timers';
+import loading from "@/components/loading.vue";
+import { setTimeout } from "timers";
 export default {
   data() {
     return {
@@ -155,7 +155,7 @@ export default {
       },
       isShowSuccess: false, //是否显示成功
       isShowAgent: false, //是否显示经销商列表
-      isShowloading:false,//是否显示loading页
+      isShowloading: false, //是否显示loading页
       info: {
         username: "",
         phone: "",
@@ -179,12 +179,12 @@ export default {
     }
     _this.info.packingPic = _this.packingInfo.picData;
     _this.info.InstallPic = _this.installInfo.picData;
-    _this.getAgentFun();// 获取经销商列表
+    _this.getAgentFun(); // 获取经销商列表
   },
   methods: {
     // 顶部返回按钮
     onClickLeft() {
-      this.$router.push({path:'/bespeakList'});
+      this.$router.push({ path: "/bespeakList" });
     },
     // 选择省市区
     selectArea() {
@@ -222,41 +222,42 @@ export default {
       });
     },
     // 提交表单
-    submitFn(){
+    submitFn() {
       var _this = this;
       _this.isShowloading = true;
       var reqUrl = "/index/appointment/noband_install";
       var data = {
         username: this.info.username,
         phone: this.info.phone,
-        province:this.info.province,
-        city:this.info.city,
+        province: this.info.province,
+        city: this.info.city,
         area: this.info.area,
         // buy_agent:_this.info.agentValue,
-        buy_agent:'',
-        buy_agent_id:1,
+        buy_agent: "",
+        buy_agent_id: 1,
         install_address: this.info.install_address,
         appoint_time: this.info.appoint_time,
-        baozhuang_img1:this.info.packingPic[0],
-        baozhuang_img2:this.info.packingPic[1],
-        baozhuang_img3:this.info.packingPic[2],
-        baozhuang_img4:this.info.packingPic[3],
-        huanjing_img1:this.info.InstallPic[0],
-        huanjing_img2:this.info.InstallPic[1],
-        huanjing_img3:this.info.InstallPic[2],
-        huanjing_img4:this.info.InstallPic[3],
-        baozhuang_beizhu:this.packingInfo.remark,
-        huanjing_beizhu:this.installInfo.remark,
-        width:this.installInfo.wide+'cm',
-        height:this.installInfo.long+'cm',
+        baozhuang_img1: this.info.packingPic[0],
+        baozhuang_img2: this.info.packingPic[1],
+        baozhuang_img3: this.info.packingPic[2],
+        baozhuang_img4: this.info.packingPic[3],
+        huanjing_img1: this.info.InstallPic[0],
+        huanjing_img2: this.info.InstallPic[1],
+        huanjing_img3: this.info.InstallPic[2],
+        huanjing_img4: this.info.InstallPic[3],
+        baozhuang_beizhu: this.packingInfo.remark,
+        huanjing_beizhu: this.installInfo.remark,
+        width: this.installInfo.wide + "cm",
+        height: this.installInfo.long + "cm"
       };
       _this.$http.post(reqUrl, qs.stringify(data)).then(res => {
         if (res.data.code == 200) {
           _this.isShowloading = false;
           _this.isShowSuccess = true;
-          setTimeout(function(){
-            _this.$router.push({path:'/bespeakDetails'});
-          },3000);
+          _this.emptyFun();
+          setTimeout(function() {
+            _this.$router.push({ path: "/bespeakDetails" });
+          }, 3000);
         } else {
           _this.$dialog.alert({ message: res.data.msg });
         }
@@ -296,10 +297,47 @@ export default {
     },
     // 跳转页面保存信息
     saveInfo() {
-      console.log(123);
       this.$store.commit({
         type: "saveFromData",
         fromData: this.info
+      });
+    },
+    // 清空数据
+    emptyFun() {
+      this.$store.commit({
+        type: "saveFromData",
+        fromData: {
+          username: "",
+          phone: "",
+          province: "",
+          city: "",
+          area: "",
+          agentValue: "",
+          areaValue: "",
+          install_address: "",
+          packingPic: ["", "", "", ""],
+          InstallPic: ["", "", "", ""],
+          appoint_time: ""
+        }
+      });
+      this.info = data;
+      _this.$store.commit({
+        type: "saveParkingInfo",
+        parkingInfo: {
+          type: "packing",
+          picData: ["", "", "", ""],
+          remark: ""
+        }
+      });
+      _this.$store.commit({
+        type: "saveInstallInfo",
+        installInfo: {
+          type: "packing",
+          picData: ["", "", "", ""],
+          remark: "",
+          long: "",
+          wide: ""
+        }
       });
     }
   },
@@ -314,8 +352,8 @@ export default {
       return this.$store.state.installMode.installInfo;
     }
   },
-  components:{
-      loading
+  components: {
+    loading
   }
 };
 </script>
