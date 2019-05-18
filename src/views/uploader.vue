@@ -8,6 +8,7 @@
           <p>{{item.txt}}</p>
         </van-uploader>
         <img :src="item.src" alt v-show="item.isShow">
+        <van-icon name="clear" class="my-clear" v-show="item.isShow" @click='clearFun(item)' />
       </li>
     </ul>
     <!-- 备注 -->
@@ -88,6 +89,13 @@ export default {
         parkingInfo: _this.infoData
       });
       _this.$router.push({ path: "/bespeakFrom2" });
+    },
+    // 清除图片
+    clearFun(res){
+      var _this = this;
+      _this.pictureSrc[parseInt(res.num)].src = '';
+      _this.pictureSrc[parseInt(res.num)].isShow = false;
+      _this.infoData.picData[parseInt(res.num)] = '';
     }
   },
   computed: {
@@ -127,6 +135,7 @@ export default {
       background-color: #ffffff;
       margin-top: 10px;
       text-align: center;
+      position: relative;
       p {
         text-align: center;
         font-size: 16px;
@@ -140,6 +149,7 @@ export default {
         border-radius: 10px;
         background-color: #ffffff;
       }
+      .my-clear{position: absolute;top:0px;right: 0;z-index: 3;color: #ff8181;}
     }
   }
   .remarks {

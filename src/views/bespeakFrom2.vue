@@ -19,7 +19,7 @@
         :error-message="errors.first('contactPhone')"
       />
       <van-field
-        label="区域选择"
+        label="安装地址"
         placeholder="请选择省、市、区县"
         readonly
         @click="selectArea"
@@ -30,7 +30,7 @@
       >
         <van-icon slot="icon" name="arrow"/>
       </van-field>
-      <van-field
+      <!-- <van-field
         label="销售商"
         placeholder="请选择销售商"
         v-model="info.agentValue"
@@ -39,15 +39,15 @@
         v-validate="'required'"
         name="changeAgent"
         :error-message="errors.first('changeAgent')"
-      >
+      > -->
         <van-icon slot="icon" name="arrow"/>
       </van-field>
       <van-field
-        label="安装地址"
+        label="详细地址"
         type="textarea"
         rows="1"
         autosize
-        placeholder="请填写安装地址"
+        placeholder="请填写详细地址"
         v-model="info.install_address"
         v-validate="'required'"
         name="install_address"
@@ -91,7 +91,7 @@
       </van-field>
     </van-cell-group>
     <div class="btn-ground">
-      <van-button type="primary" size="large" class="btn-custom" @click="validatorFun">确认</van-button>
+      <van-button type="primary" size="large" :class="[isFillIn?'btn-custom':'btn-gray']" @click="validatorFun">确认</van-button>
       <!-- <van-button size="large" class="cancelBtn">取消</van-button> -->
     </div>
     <!-- 选择省、市、区 -->
@@ -162,6 +162,7 @@ export default {
         province: "",
         city: "",
         area: "",
+        town:"",
         agentValue: "",
         areaValue: "",
         install_address: "",
@@ -198,6 +199,7 @@ export default {
       _this.info.area = "";
       _this.info.province = res[0].name;
       _this.info.city = res[1].name;
+      _this.info.town = res[2].name;
       for (var i = 0; i < res.length; i++) {
         _this.info.area += res[i].name;
         _this.info.area += " ";
@@ -231,10 +233,8 @@ export default {
         phone: this.info.phone,
         province: this.info.province,
         city: this.info.city,
+        town:this.info.town,
         area: this.info.area,
-        // buy_agent:_this.info.agentValue,
-        buy_agent: "",
-        buy_agent_id: 1,
         install_address: this.info.install_address,
         appoint_time: this.info.appoint_time,
         baozhuang_img1: this.info.packingPic[0],
@@ -251,6 +251,7 @@ export default {
         height: this.installInfo.long + "cm"
       };
       _this.$http.post(reqUrl, qs.stringify(data)).then(res => {
+        console.log(res);
         if (res.data.code == 200) {
           _this.isShowloading = false;
           _this.isShowSuccess = true;
@@ -320,8 +321,7 @@ export default {
           appoint_time: ""
         }
       });
-      this.info = data;
-      _this.$store.commit({
+      this.$store.commit({
         type: "saveParkingInfo",
         parkingInfo: {
           type: "packing",
@@ -329,7 +329,7 @@ export default {
           remark: ""
         }
       });
-      _this.$store.commit({
+      this.$store.commit({
         type: "saveInstallInfo",
         installInfo: {
           type: "packing",
@@ -350,6 +350,15 @@ export default {
     },
     installInfo() {
       return this.$store.state.installMode.installInfo;
+    },
+    isFillIn(){
+      var isFillIn;
+      if(this.info.phone != '' && this.info.username != '' && this.info.area != '' && this.info.install_address != '' && this.packingInfo.remark != '' && this.info.appoint_time != '' && this.installInfo.remark != ''){
+        isFillIn = true;
+      }else{
+        isFillIn = false;
+      }
+      return isFillIn;
     }
   },
   components: {
@@ -370,6 +379,9 @@ export default {
   .btn-ground {
     width: 350px;
     margin: 40px auto 40px;
+  }
+  .btn-gray{
+    background-color: #cccccc;border:1px #cccccc solid;
   }
   .cancelBtn {
     margin-top: 20px;

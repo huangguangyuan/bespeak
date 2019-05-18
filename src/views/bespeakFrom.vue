@@ -19,7 +19,7 @@
         :error-message="errors.first('contactPhone')"
       />
       <van-field
-        label="区域选择"
+        label="安装地址"
         placeholder="请选择省、市、区县"
         readonly
         @click="selectArea"
@@ -32,17 +32,6 @@
       </van-field>
       <van-field
         label="详细地址"
-        type="textarea"
-        rows="1"
-        autosize
-        placeholder="请填写详细地址"
-        v-model="info.address"
-        v-validate="'required'"
-        name="address"
-        :error-message="errors.first('address')"
-      />
-      <van-field
-        label="安装地址"
         type="textarea"
         rows="1"
         autosize
@@ -78,7 +67,7 @@
       </van-field>
     </van-cell-group>
     <div class="btn-ground">
-      <van-button type="primary" size="large" class="btn-custom" @click="validatorFun">确认</van-button>
+      <van-button type="primary" size="large" :class="[isFillIn?'btn-custom':'btn-gray']" @click="validatorFun">确认</van-button>
       <!-- <van-button size="large" class="cancelBtn">取消</van-button> -->
     </div>
     <!-- 选择省、市、区 -->
@@ -137,8 +126,8 @@ export default {
         area: "",
         province: "",
         city: "",
+        town:"",
         areaValue: "",
-        address: "",
         install_address: "",
         install_orders_id: [],
         appoint_time: ""
@@ -169,6 +158,7 @@ export default {
       _this.info.area = "";
       _this.info.province = res[0].name;
       _this.info.city = res[1].name;
+      _this.info.town = res[2].name;
       for (var i = 0; i < res.length; i++) {
         _this.info.area += res[i].name;
         _this.info.area += " ";
@@ -201,8 +191,8 @@ export default {
         username: this.info.username,
         province: this.info.province,
         city: this.info.city,
+        town:this.info.town,
         area: this.info.area,
-        address: this.info.install_address,
         install_address: this.info.install_address,
         install_orders_id: this.info.install_orders_id.join(","),
         appoint_time: this.info.appoint_time
@@ -230,7 +220,7 @@ export default {
     },
     // 清空数据
     emptyFun() {
-      _this.$store.commit({
+      this.$store.commit({
         type: "saveFromData",
         fromData: {
           username: "",
@@ -239,13 +229,12 @@ export default {
           province: "",
           city: "",
           areaValue: "",
-          address: "",
           install_address: "",
           install_orders_id: [],
           appoint_time: ""
         }
       });
-      _this.$store.commit({
+      this.$store.commit({
         type: "getOrdersId",
         installOrdersId: []
       });
@@ -257,6 +246,15 @@ export default {
     },
     formInfo() {
       return this.$store.state.installMode.fromData;
+    },
+    isFillIn(){
+      var isFillIn;
+      if(this.info.phone != '' && this.info.username != '' && this.info.area != '' && this.info.install_address != '' && this.info.install_orders_id != '' && this.info.appoint_time != ''){
+        isFillIn = true;
+      }else{
+        isFillIn = false;
+      }
+      return isFillIn;
     }
   },
   components: {
@@ -280,6 +278,9 @@ export default {
   }
   .cancelBtn {
     margin-top: 20px;
+  }
+  .btn-gray{
+    background-color: #cccccc;border:1px #cccccc solid;
   }
   .success-mask {
     width: 80%;

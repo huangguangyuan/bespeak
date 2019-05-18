@@ -303,11 +303,11 @@ export default {
           appoint_time: ""
         }
       });
-      _this.$store.commit({
+      this.$store.commit({
         type: "getOrdersId",
         installOrdersId: []
       });
-      _this.$store.commit({
+      this.$store.commit({
         type: "saveFaultInfo",
         faultInfo: {
           type: "packing",
