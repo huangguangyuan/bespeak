@@ -40,7 +40,7 @@ export default {
   },
   methods: {
     onClickLeft() {
-      this.$router.push({path:'/bespeakList'});
+      this.$router.push({ path: "/bespeakList" });
     },
     getDetailsFun() {
       var _this = this;
@@ -80,7 +80,8 @@ export default {
       var _this = this;
       _this.$store.commit({
         type: "getOrderID",
-        orderID: res.id
+        orderID: res.id,
+        orderDetailsID: res.id
       });
       switch (res.install_status) {
         case 0:
@@ -93,8 +94,8 @@ export default {
           _this.$router.push({ path: "/evaluateFrom" });
           break;
         case 3:
-          _this.$router.push({ path: "/orderDetails" });
-          break;
+          // _this.$router.push({ path: "/orderDetails" });
+          // break;
       }
     },
     // 拨号

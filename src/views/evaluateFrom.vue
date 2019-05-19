@@ -69,7 +69,6 @@ export default {
   },
   mounted() {
     var _this = this;
-    console.log(_this.evaluateInfo);
     _this.getInfo();
   },
   methods: {
@@ -106,7 +105,7 @@ export default {
       var _this = this;
       var reqUrl = "/index/appointment/getInstallerInfo";
       var data = {
-        id: _this.evaluateInfo.id
+        id: _this.orderDetailsID
       };
       _this.$http.post(reqUrl, data).then(res => {
         _this.name = res.data.data.installer_name;
@@ -121,20 +120,19 @@ export default {
       var _this = this;
       var reqUrl = "/index/appointment/pingjia";
       var data = {
-        id: _this.evaluateInfo.id,
+        id: _this.orderDetailsID,
         orders_id: _this.orderNo,
         pingjia: _this.message,
         star_point: _this.rate
       };
       _this.$http.post(reqUrl, data).then(res => {
-        console.log(res);
         _this.isShowSuccess = true;
       });
     }
   },
   computed: {
-    evaluateInfo() {
-      return this.$store.state.installMode.evaluateInfo;
+    orderDetailsID() {
+      return this.$store.state.installMode.orderDetailsID;
     }
   }
 };
