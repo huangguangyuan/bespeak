@@ -13,15 +13,15 @@
         <span>电 话：</span>
         <span>{{phone}}</span>
       </p>
-      <p>
+      <p v-if='goods_name'>
         <span>产品名：</span>
         <span>{{goods_name}}</span>
       </p>
-      <p>
+      <p v-if='goods_color'>
         <span>颜 色：</span>
         <span>{{goods_color}}</span>
       </p>
-      <p>
+      <p v-if='pro_size'>
         <span>型 号：</span>
         <span>{{pro_size}}</span>
       </p>
@@ -45,21 +45,22 @@
           <van-button type="primary" size='small' class="btn-custom" @click='timeParameter.isShowTime=true'>修改时间</van-button>
       </div>
     </div>
-    <h3>备注:</h3>
     <h4>包装图片</h4>
     <div class="remarks">
-      <img :src="baozhuang_imgArr[0]" alt="">
-      <img :src="baozhuang_imgArr[1]" alt="">
-      <img :src="baozhuang_imgArr[2]" alt="">
-      <img :src="baozhuang_imgArr[3]" alt="">
+      <img :src="baozhuang_imgArr[0]" alt="" v-if='baozhuang_imgArr[0]'>
+      <img :src="baozhuang_imgArr[1]" alt="" v-if='baozhuang_imgArr[1]'>
+      <img :src="baozhuang_imgArr[2]" alt="" v-if='baozhuang_imgArr[2]'>
+      <img :src="baozhuang_imgArr[3]" alt="" v-if='baozhuang_imgArr[3]'>
     </div>
+    <h3>包装图片备注：{{baozhuang_beizhu}}</h3>
     <h4>环境图片</h4>
     <div class="remarks">
-      <img :src="huanjing_imgArr[0]" alt="">
-      <img :src="huanjing_imgArr[1]" alt="">
-      <img :src="huanjing_imgArr[2]" alt="">
-      <img :src="huanjing_imgArr[3]" alt="">
+      <img :src="huanjing_imgArr[0]" alt="" v-if='huanjing_imgArr[0]'>
+      <img :src="huanjing_imgArr[1]" alt="" v-if='huanjing_imgArr[1]'>
+      <img :src="huanjing_imgArr[2]" alt="" v-if='huanjing_imgArr[2]'>
+      <img :src="huanjing_imgArr[3]" alt="" v-if='huanjing_imgArr[3]'>
     </div>
+    <h3>包装图片备注：{{huanjing_beizhu}}</h3>
     <!-- 成功 -->
     <van-popup v-model="isShowSuccess" class="success-mask" @click='isShowSuccess = false'>
       <van-icon name="checked" size="120px" color="#ff4e1f"/>
@@ -106,6 +107,9 @@ export default {
         maxDate: new Date(2020, 12, 31),
         currentDate: new Date()
       },
+      baozhuang_beizhu:'',
+      huanjing_beizhu:'',
+
     };
   },
   mounted(){
@@ -122,7 +126,7 @@ export default {
       var reqUrl = '/index/appointment/myOrderDetail';
       var data = {oid:_this.orderID}
       _this.$http.post(reqUrl,data).then(res => {
-        console.log(res.data);
+        console.log(res);
         _this.username = res.data.data.username;
         _this.phone = res.data.data.phone.replace(/(\d{3})\d{4}(\d{4})/, "$1****$2");
         _this.goods_name = res.data.data.goods_name;
@@ -130,14 +134,16 @@ export default {
         _this.pro_size = res.data.data.pro_size;
         _this.appoint_time = res.data.data.appoint_time;
         _this.install_address = res.data.data.install_address
-        _this.baozhuang_imgArr[0] = 'http://'+res.data.data.baozhuang_img1.slice(13)
-        _this.baozhuang_imgArr[1] = 'http://'+res.data.data.baozhuang_img2.slice(13)
-        _this.baozhuang_imgArr[2] = 'http://'+res.data.data.baozhuang_img3.slice(13)
-        _this.baozhuang_imgArr[3] = 'http://'+res.data.data.baozhuang_img4.slice(13)
-        _this.huanjing_imgArr[0] = 'http://'+res.data.data.huanjing_img1.slice(13)
-        _this.huanjing_imgArr[1] = 'http://'+res.data.data.huanjing_img2.slice(13)
-        _this.huanjing_imgArr[2] = 'http://'+res.data.data.huanjing_img3.slice(13)
-        _this.huanjing_imgArr[3] = 'http://'+res.data.data.huanjing_img4.slice(13)
+        _this.baozhuang_imgArr[0] = res.data.data.baozhuang_img1==''?'':'http://'+res.data.data.baozhuang_img1.slice(13)
+        _this.baozhuang_imgArr[1] = res.data.data.baozhuang_img2==''?'':'http://'+res.data.data.baozhuang_img2.slice(13)
+        _this.baozhuang_imgArr[2] = res.data.data.baozhuang_img3==''?'':'http://'+res.data.data.baozhuang_img3.slice(13)
+        _this.baozhuang_imgArr[3] = res.data.data.baozhuang_img4==''?'':'http://'+res.data.data.baozhuang_img4.slice(13)
+        _this.huanjing_imgArr[0] = res.data.data.huanjing_img1==""?'':'http://'+res.data.data.huanjing_img1.slice(13)
+        _this.huanjing_imgArr[1] = res.data.data.huanjing_img2==""?'':'http://'+res.data.data.huanjing_img2.slice(13)
+        _this.huanjing_imgArr[2] = res.data.data.huanjing_img3==""?'':'http://'+res.data.data.huanjing_img3.slice(13)
+        _this.huanjing_imgArr[3] = res.data.data.huanjing_img4==""?'':'http://'+res.data.data.huanjing_img4.slice(13)
+        _this.baozhuang_beizhu = res.data.data.baozhuang_beizhu
+        _this.huanjing_beizhu = res.data.data.huanjing_beizhu
       })
     },
     // 获取时间
@@ -174,10 +180,10 @@ export default {
       width: 375px;box-sizing: border-box;padding: 20px 13px;border-top:2px #f0f0f0 solid;border-bottom:2px #f0f0f0 solid;
       margin-top: 10px;background-color: #ffffff;position: relative;
       p{
-        display: flex;margin: 3px auto;
+        display: flex;margin: 3px auto;justify-content: flex-start;
         span{font-size: 14px;}
-        span:nth-child(1){flex: 1.2;text-align: right;}
-        span:nth-child(2){flex: 4;}
+        span:nth-child(1){width: 70px;;text-align: right;}
+        span:nth-child(2){width: 205px;box-sizing: border-box;}
       }
       .modifyTime{position: absolute;bottom: 20px;right: 20px;}
     }

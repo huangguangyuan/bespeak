@@ -8,6 +8,7 @@
           <p>{{item.txt}}</p>
         </van-uploader>
         <img :src="item.src" alt v-show="item.isShow">
+        <van-icon name="clear" class="my-clear" v-show="item.isShow" @click='clearFun(item)' />
       </li>
     </ul>
     <!-- 备注 -->
@@ -45,10 +46,21 @@ export default {
       }
     };
   },
+  mounted(){
+    var _this = this;
+    _this.initializationFun();
+  },
   methods: {
-    // 顶部返回按钮
-    onClickLeft() {
-      this.$router.go(-1);
+    // 初始化
+    initializationFun(){
+      for(var i = 0;i<this.pictureSrc.length;i++){
+        this.pictureSrc[i].src = this.faultInfo.picData[i];
+        this.infoData.picData[i] = this.faultInfo.picData[i];
+        if(this.pictureSrc[i].src != ''){
+          this.pictureSrc[i].isShow = true;
+        }
+      }
+      this.infoData.remark = this.faultInfo.remark;
     },
     // 读取图片
     onRead(file, detail) {
@@ -86,6 +98,22 @@ export default {
         faultInfo: _this.infoData
       });
       _this.$router.push({ path: "/repairFrom" });
+    },
+    // 清除图片
+    clearFun(res){
+      var _this = this;
+      _this.pictureSrc[parseInt(res.num)].src = '';
+      _this.pictureSrc[parseInt(res.num)].isShow = false;
+      _this.infoData.picData[parseInt(res.num)] = '';
+    },
+    // 顶部返回按钮
+    onClickLeft() {
+      this.$router.go(-1);
+    }
+  },
+  computed:{
+    faultInfo() {
+      return this.$store.state.installMode.faultInfo;
     }
   }
 };
@@ -120,6 +148,7 @@ export default {
       background-color: #ffffff;
       margin-top: 10px;
       text-align: center;
+      position: relative;
       p {
         text-align: center;
         font-size: 16px;
@@ -133,6 +162,7 @@ export default {
         border-radius: 10px;
         background-color: #ffffff;
       }
+      .my-clear{position: absolute;top:0px;right: 0;z-index: 3;color: #ff8181;}
     }
   }
   .remarks {

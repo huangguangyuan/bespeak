@@ -1,6 +1,6 @@
 <template>
   <div class="uploader">
-    <van-nav-bar title="快速报装" left-arrow fixed @click-left="onClickLeft"/>
+    <van-nav-bar title="安装环境图片" left-arrow fixed @click-left="onClickLeft"/>
     <ul class="picture-list">
         <li v-for='(item, index) in pictureSrc' :key='index'>
             <van-uploader :name='item.num' :after-read="onRead">
@@ -8,6 +8,7 @@
                 <p>添加包装图片</p>
             </van-uploader>
             <img :src="item.src" alt="" v-show='item.isShow'>
+            <van-icon name="clear" class="my-clear" v-show="item.isShow" @click='clearFun(item)' />
         </li>
     </ul>
     <!-- 备注 -->
@@ -50,10 +51,23 @@ export default {
         }
     };
   },
+  mounted(){
+    var _this = this;
+    _this.initializationFun();
+  },
   methods: {
-    // 顶部返回按钮
-    onClickLeft() {
-        this.$router.go(-1);
+    // 初始化
+    initializationFun(){
+      for(var i = 0;i<this.pictureSrc.length;i++){
+        this.pictureSrc[i].src = this.installInfo.picData[i];
+        this.infoData.picData[i] = this.installInfo.picData[i];
+        if(this.pictureSrc[i].src != ''){
+          this.pictureSrc[i].isShow = true;
+        }
+      }
+      this.infoData.remark = this.installInfo.remark;
+      this.infoData.long = this.installInfo.long;
+      this.infoData.wide = this.installInfo.wide;
     },
     // 读取图片
     onRead(file, detail) {
@@ -96,8 +110,23 @@ export default {
             installInfo:_this.infoData
         });
         _this.$router.push({path:'/bespeakFrom2'});
+    },
+    // 清除图片
+    clearFun(res){
+      var _this = this;
+      _this.pictureSrc[parseInt(res.num)].src = '';
+      _this.pictureSrc[parseInt(res.num)].isShow = false;
+      _this.infoData.picData[parseInt(res.num)] = '';
+    },
+    // 顶部返回按钮
+    onClickLeft() {
+        this.$router.go(-1);
     }
-
+  },
+  computed: {
+    installInfo() {
+      return this.$store.state.installMode.installInfo;
+    }
   }
 };
 </script>
@@ -108,9 +137,10 @@ export default {
     .picture-list{
         width: 350px;display: flex;justify-content: space-between;flex-wrap: wrap;margin: 0 auto;
         li{
-            width: 170px;height: 170px;box-sizing: border-box;border-radius: 10px;overflow: hidden;display: flex;justify-content: center;align-items: center;border:1px #ededed solid;background-color: #ffffff;margin-top: 10px;text-align: center;
+            width: 170px;height: 170px;box-sizing: border-box;border-radius: 10px;overflow: hidden;display: flex;justify-content: center;align-items: center;border:1px #ededed solid;background-color: #ffffff;margin-top: 10px;text-align: center;position: relative;
             p{text-align: center;font-size: 16px;color: #d8d7d7;margin-top: 5px;}
             img{position: absolute;width: 170px;height: 170px;border-radius: 10px;background-color: #ffffff}
+            .my-clear{position: absolute;top:0px;right: 0;z-index: 3;color: #ff8181;}
         }
     }
     .remarks{

@@ -1,6 +1,6 @@
 <template>
   <div class="bespeakFrom">
-    <van-nav-bar title="快速报装" left-arrow fixed @click-left="onClickLeft"/>
+    <van-nav-bar title="预约维修" left-arrow fixed @click-left="onClickLeft"/>
     <van-cell-group>
       <van-field
         label="报装人"
@@ -58,10 +58,6 @@
         placeholder="请选择包装图片"
         readonly
         @click="saveInfo();$router.push({path:'/uploader'})"
-        v-model="packingInfo.remark"
-        v-validate="'required'"
-        name="remark"
-        :error-message="errors.first('remark')"
       >
         <van-icon slot="icon" name="arrow"/>
       </van-field>
@@ -70,10 +66,6 @@
         placeholder="请上传安装环境图片"
         readonly
         @click="saveInfo();$router.push({path:'/uploader2'})"
-        v-model="installInfo.remark"
-        v-validate="'required'"
-        name="remark2"
-        :error-message="errors.first('remark2')"
       >
         <van-icon slot="icon" name="arrow"/>
       </van-field>
@@ -180,7 +172,7 @@ export default {
     }
     _this.info.packingPic = _this.packingInfo.picData;
     _this.info.InstallPic = _this.installInfo.picData;
-    _this.getAgentFun(); // 获取经销商列表
+    //_this.getAgentFun(); // 获取经销商列表
   },
   methods: {
     // 顶部返回按钮
@@ -216,10 +208,14 @@ export default {
     validatorFun() {
       var _this = this;
       _this.$validator.validateAll().then(result => {
-        console.log(result);
         if (result) {
           //axios提交
-          _this.submitFn();
+          if(_this.isFillIn){
+            _this.submitFn();
+          }else{
+            _this.$dialog.alert({ message: '请填写完整信息~' });
+          }
+         
         }
       });
     },
@@ -270,7 +266,6 @@ export default {
       var reqUrl = "/index/appointment/agent_info";
       var data = {};
       _this.$http.post(reqUrl, data).then(res => {
-        console.log(res);
         if (res.data.code == 200) {
           _this.agentList = res.data.data.map(item => {
             return item.store;

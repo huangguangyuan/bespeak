@@ -1,6 +1,6 @@
 <template>
   <div class="uploader">
-    <van-nav-bar title="快速报装" left-arrow fixed @click-left="onClickLeft"/>
+    <van-nav-bar title="包装图片" left-arrow fixed @click-left="onClickLeft"/>
     <ul class="picture-list">
       <li v-for="(item, index) in pictureSrc" :key="index">
         <van-uploader :name="item.num" :after-read="onRead">
@@ -48,12 +48,20 @@ export default {
   },
   mounted(){
       var _this = this;
-      // _this.infoData = _this.packingInfo;
+      console.log(_this.packingInfo);
+      _this.initializationFun();
   },
   methods: {
-    // 顶部返回按钮
-    onClickLeft() {
-      this.$router.go(-1);
+    // 初始化
+    initializationFun(){
+      for(var i = 0;i<this.pictureSrc.length;i++){
+        this.pictureSrc[i].src = this.packingInfo.picData[i];
+        this.infoData.picData[i] = this.packingInfo.picData[i];
+        if(this.pictureSrc[i].src != ''){
+          this.pictureSrc[i].isShow = true;
+        }
+      }
+      this.infoData.remark = this.packingInfo.remark;
     },
     // 读取图片
     onRead(file, detail) {
@@ -96,7 +104,11 @@ export default {
       _this.pictureSrc[parseInt(res.num)].src = '';
       _this.pictureSrc[parseInt(res.num)].isShow = false;
       _this.infoData.picData[parseInt(res.num)] = '';
-    }
+    },
+    // 顶部返回按钮
+    onClickLeft() {
+      this.$router.go(-1);
+    },
   },
   computed: {
     packingInfo() {

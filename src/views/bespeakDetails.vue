@@ -2,7 +2,7 @@
   <div class="bespeakDetails">
     <van-nav-bar title="预约详情" left-arrow fixed @click-left="onClickLeft"/>
     <ul class="container">
-      <li v-for="item in dataList">
+      <li v-for="item in dataList" :class="[item.install_type==1?'install':'repair']">
         <div class="timer">{{item.appoint_time}}</div>
         <div class="center">
           <span class="line"></span>
@@ -10,12 +10,17 @@
         </div>
         <div class="content">
           <h5>{{item.install_type==1?'安装':'维修'}}</h5>
-          <div class="dial" @click='dialFun(item.id)'>
-            <van-icon name="phone" />
+          <div class="dial" @click="dialFun(item.id)">
+            <van-icon name="phone"/>
             <span>拨 号</span>
           </div>
           <p>{{item.txt}}</p>
-          <van-button plain size="small" @click="clickFun(item)">{{item.install_status_words}}</van-button>
+          <van-button
+            class="btn-reset"
+            plain
+            size="small"
+            @click="clickFun(item)"
+          >{{item.install_status_words}}</van-button>
         </div>
       </li>
     </ul>
@@ -35,7 +40,7 @@ export default {
   },
   methods: {
     onClickLeft() {
-      this.$router.go(-1);
+      this.$router.push({path:'/bespeakList'});
     },
     getDetailsFun() {
       var _this = this;
@@ -77,8 +82,7 @@ export default {
         type: "getOrderID",
         orderID: res.id
       });
-      switch(res.install_status)
-      {
+      switch (res.install_status) {
         case 0:
           _this.$router.push({ path: "/orderDetails" });
           break;
@@ -92,20 +96,19 @@ export default {
           _this.$router.push({ path: "/orderDetails" });
           break;
       }
-      
     },
     // 拨号
-    dialFun(id){
+    dialFun(id) {
       var _this = this;
-      var reqUrl = '/index/appointment/userCallInstaller';
-      var data = {id:id}
-      _this.$http.post(reqUrl,data).then(res => {
-        if(res.data.code == 200){
-          window.location.href = "tel:"+res.data.data.phone_x;
-        }else{
-          _this.$dialog.alert({message:res.data.msg});
+      var reqUrl = "/index/appointment/userCallInstaller";
+      var data = { id: id };
+      _this.$http.post(reqUrl, data).then(res => {
+        if (res.data.code == 200) {
+          window.location.href = "tel:" + res.data.data.phone_x;
+        } else {
+          _this.$dialog.alert({ message: res.data.msg });
         }
-      })
+      });
     }
   }
 };
@@ -154,8 +157,17 @@ export default {
       .content {
         padding-bottom: 30px;
         width: 500px;
-        .dial{
-          border-radius: 8px;font-size: 12px;margin: 10px 0;display: flex;justify-content: center;align-content: center;color: #fe491f;align-items: center;border:1px #fe491f solid;width: 60px;
+        .dial {
+          border-radius: 8px;
+          font-size: 12px;
+          margin: 10px 0;
+          display: flex;
+          justify-content: center;
+          align-content: center;
+          color: #fe491f;
+          align-items: center;
+          border: 1px #fe491f solid;
+          width: 60px;
         }
         h5 {
           font-size: 14px;
@@ -164,9 +176,20 @@ export default {
           font-size: 12px;
           margin: 10px 0;
         }
-        button{color: #fe491f;}
+        .btn-reset {
+          color: #fe491f;
+          background-color: #f7f7f7;
+          border-radius: 8px;
+          border: 1px #ebebeb solid;
+        }
       }
     }
+  }
+  .install {
+    color: #808080;
+  }
+  .repair {
+    color: #202020;
   }
 }
 </style>

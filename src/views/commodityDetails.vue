@@ -21,18 +21,18 @@
           <div class="proInfo">
             <p>
               <span>ID 号: {{item.id}}</span>
-              <span>产品名称: {{item.goods_name}}</span>
-              <span>产品型号: {{item.pro_siez}}</span>
-              <span>产品颜色: {{item.color}}</span>
+              <span v-if='item.goods_name'>产品名称: {{item.goods_name}}</span>
+              <span v-if='item.pro_siez'>产品型号: {{item.pro_siez}}</span>
+              <span v-if='item.color'>产品颜色: {{item.color}}</span>
             </p>
             <van-checkbox v-model="item.checked" checked-color="#fb2812"></van-checkbox>
           </div>
         </div>
         <div class="remarks">
-          <p>{{item.buyer_msg}}</p>
-          <p>{{item.buyer_remarks}}</p>
+          <p v-if='item.buyer_msg'>{{item.buyer_msg}}</p>
+          <p v-if='item.buyer_remarks'>{{item.buyer_remarks}}</p>
         </div>
-        <div class="logistics">
+        <div class="logistics" v-if='item.express_status'>
           <p>物流状态：{{item.express_status}}</p>
         </div>
       </li>
@@ -49,7 +49,7 @@
     <!-- 按钮 -->
     <div class="btn-ground">
       <van-button type="primary" size="large" class="btn-custom" @click="confirmFn">确认</van-button>
-      <van-button size="large" class="cancelBtn">取消</van-button>
+      <!-- <van-button size="large" class="cancelBtn">取消</van-button> -->
     </div>
   </div>
 </template>
@@ -78,8 +78,15 @@ export default {
         .post(reqUrl, data)
         .then(res => {
           if (res.data.code == 200) {
-            _this.dataList = res.data.data;
-            _this.dataList.checked = false;
+            _this.dataList = res.data.data.map(item => {
+              item.checked = false;
+              return item;
+            });
+            for(var i = 0;i<_this.ordersId.length;i++){
+              if(_this.dataList[i].id == _this.ordersId[i]){
+                _this.dataList[i].checked = true
+              }
+            }
             _this.total = _this.dataList.length;
           }
         })
@@ -127,6 +134,9 @@ export default {
       var _this = this;
       var pageTotal = Math.ceil(_this.total / _this.pageSize);
       return pageTotal;
+    },
+    ordersId(){
+      return this.$store.state.installMode.installOrdersId;
     }
   }
 };
@@ -135,7 +145,7 @@ export default {
 .commodityDetails {
   position: absolute;
   width: 100%;
-  height: 100%;
+  min-height: 100%;
   top: 0;
   left: 0;
   box-sizing: border-box;
@@ -191,15 +201,20 @@ export default {
       }
     }
     .remarks {
-      background-color: #ffffff;
-      min-height: 120px;
-      padding: 13px;
-      border-top: 1px #e0e0e0 solid;
-      border-bottom: 1px #e0e0e0 solid;
-      margin-top: 10px;
       p {
         font-size: 14px;
         color: #202020;
+        padding: 5px 13px;
+        background-color: #ffffff;
+      }
+      p:nth-child(1){
+        margin-top: 10px;
+        border-top: 1px #e0e0e0 solid;
+        padding-top:10px;
+      }
+      p:last-child{
+        border-bottom: 1px #e0e0e0 solid;
+        padding-bottom:10px;
       }
     }
     .logistics {

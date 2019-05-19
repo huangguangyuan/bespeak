@@ -61,6 +61,7 @@
         v-validate="'required'"
         name="orders_id"
         :error-message="errors.first('orders_id')"
+        v-if='isShowOrderId'
       >
         <van-icon slot="icon" name="arrow"/>
       </van-field>
@@ -246,9 +247,7 @@ export default {
         address: this.info.address,
         install_orders_id: this.info.install_orders_id
       };
-      console.log(data);
       _this.$http.post(reqUrl, qs.stringify(data)).then(res => {
-        console.log(res);
         if (res.data.code == 200) {
           _this.isShowloading = false;
           _this.isShowSuccess = true;
